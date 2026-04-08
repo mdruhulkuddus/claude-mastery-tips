@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Mastery Tips — Practical AI Prompting Guide</title>
+  <meta name="description" content="A curated collection of practical tips and techniques for mastering Claude AI. Learn prompt engineering, system prompts, and advanced workflows.">
+  <meta property="og:title" content="Claude Mastery Tips">
+  <meta property="og:description" content="Practical tips and techniques for mastering Claude AI.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💡</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Reading Progress Bar -->
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- Header -->
+  <header class="site-header" id="siteHeader">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="#" class="site-brand" id="homeLink">
+          <svg class="site-logo" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="32" height="32" rx="8" fill="var(--accent)"/>
+            <path d="M16 6L18.5 12.5H25L19.75 16.5L22 23L16 19L10 23L12.25 16.5L7 12.5H13.5L16 6Z" fill="white"/>
+          </svg>
+          <span class="site-name">claude-mastery-tips</span>
+        </a>
+      </div>
+      <div class="header-right">
+        <span class="dev-credit">by <a href="https://linkedin.com/in/ruhulkuddus" target="_blank" rel="noopener">Ruhul Kuddus</a></span>
+        <div class="header-icons">
+          <a href="https://www.linkedin.com/in/mdruhulkuddus/" target="_blank" rel="noopener" class="icon-link" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          </a>
+          <a href="https://github.com/mdruhulkuddus/" target="_blank" rel="noopener" class="icon-link" aria-label="GitHub">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          </a>
+          <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            <!-- Sun icon (shown in dark mode) -->
+            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <!-- Moon icon (shown in light mode) -->
+            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle sidebar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </header>
+
+  <!-- Main Layout -->
+  <main class="main-layout">
+    <!-- Sidebar Overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">Tips</h2>
+        <div class="sidebar-search">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="searchInput" placeholder="Filter tips..." aria-label="Filter tips">
+        </div>
+      </div>
+      <nav class="sidebar-nav" id="sidebarNav">
+        <!-- Generated by JS -->
+      </nav>
+    </aside>
+
+    <!-- Content Area -->
+    <div class="content-area" id="contentArea">
+      <!-- Welcome screen or loaded tip -->
+      <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-inner">
+          <div class="welcome-icon">💡</div>
+          <h1>Welcome to Claude Mastery Tips</h1>
+          <p>A curated collection of practical tips and techniques for getting the most out of Claude AI. Pick a tip from the sidebar to start learning.</p>
+          <div class="welcome-stats">
+            <span id="tipCount">0 tips</span> available
+          </div>
+          <div class="featured-tips" id="featuredTips">
+            <!-- Generated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Tip content injected here -->
+      <div class="tip-container" id="tipContainer" style="display:none;">
+        <div class="tip-nav-bar">
+          <button class="tip-nav-btn" id="prevTip" aria-label="Previous tip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            <span>Previous</span>
+          </button>
+          <span class="tip-position" id="tipPosition"></span>
+          <button class="tip-nav-btn" id="nextTip" aria-label="Next tip">
+            <span>Next</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+        <article class="tip-body" id="tipBody">
+          <!-- Loaded content here -->
+        </article>
+      </div>
+
+      <!-- Back to top -->
+      <button class="back-to-top" id="backToTop" aria-label="Back to top">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+      </button>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p>&copy; 2025 Claude Mastery Tips — Built by <a href="https://www.linkedin.com/in/mdruhulkuddus/" target="_blank" rel="noopener">Ruhul Kuddus</a></p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

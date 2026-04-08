@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Master Claude Code — The Complete Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fdf6ee;
+    --bg-warm: #faf0e4;
+    --bg-card: #ffffff;
+    --bg-card-alt: #fef9f3;
+    --bg-inner: #f7efe5;
+    --surface: #f0e6d8;
+    --border: #e6d5c3;
+    --border-light: #d4bfa8;
+    --text: #1a1008;
+    --text-sub: #5e4d3a;
+    --text-dim: #8c7a66;
+    --burnt: #c74a2a;
+    --burnt-light: #d95530;
+    --burnt-dark: #a33d22;
+    --burnt-dim: rgba(199, 74, 42, 0.10);
+    --burnt-dim2: rgba(199, 74, 42, 0.05);
+    --burnt-bg: rgba(199, 74, 42, 0.08);
+    --teal: #0d8a7c;
+    --teal-dim: rgba(13, 138, 124, 0.08);
+    --blue: #2563b0;
+    --blue-dim: rgba(37, 99, 176, 0.07);
+    --amber: #b87708;
+    --amber-dim: rgba(184, 119, 8, 0.08);
+    --violet: #6d3fc0;
+    --violet-dim: rgba(109, 63, 192, 0.07);
+    --lime: #578a0e;
+    --lime-dim: rgba(87, 138, 14, 0.08);
+    --rose: #c0293e;
+    --rose-dim: rgba(192, 41, 62, 0.07);
+    --sky: #0974b8;
+    --sky-dim: rgba(9, 116, 184, 0.07);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', 'Noto Sans Bengali', sans-serif;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(ellipse at 20% 0%, rgba(199, 74, 42, 0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 100%, rgba(184, 119, 8, 0.03) 0%, transparent 50%);
+  }
+
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+
+  /* ── Header ── */
+  .header {
+    text-align: center;
+    padding: 48px 16px 36px;
+    border-bottom: 3px solid var(--burnt);
+    margin-bottom: 40px;
+    position: relative;
+    background: linear-gradient(180deg, rgba(199, 74, 42, 0.06) 0%, transparent 100%);
+    border-radius: 16px 16px 0 0;
+  }
+
+  .header h1 {
+    font-size: clamp(30px, 5vw, 50px);
+    font-weight: 900;
+    letter-spacing: -1px;
+    line-height: 1.15;
+    color: var(--text);
+  }
+
+  .header h1 .hl {
+    color: var(--burnt);
+  }
+
+  .header .sub {
+    font-size: 17px;
+    color: var(--text-sub);
+    margin-top: 8px;
+    font-weight: 500;
+  }
+
+  .header .meta {
+    display: inline-flex;
+    gap: 16px;
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--text-dim);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .header .meta span {
+    background: var(--bg-inner);
+    border: 1px solid var(--border);
+    padding: 4px 12px;
+    border-radius: 6px;
+  }
+
+  /* ── Section Block ── */
+  .block {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: border-color .25s, box-shadow .25s;
+    box-shadow: 0 2px 12px rgba(140, 100, 60, 0.06);
+  }
+
+  .block:hover {
+    border-color: var(--border-light);
+    box-shadow: 0 4px 20px rgba(140, 100, 60, 0.1);
+  }
+
+  .block-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 22px;
+    background: var(--burnt);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .block-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .block-head h2 {
+    font-size: 17px;
+    font-weight: 800;
+    color: #fff;
+  }
+
+  .block-body {
+    padding: 22px;
+  }
+
+  /* ── Sub-section ── */
+  .sub-block {
+    background: var(--bg-inner);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 14px;
+  }
+
+  .sub-block:last-child { margin-bottom: 0; }
+
+  .sub-title {
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text);
+  }
+
+  .sub-title .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .dot.burnt { background: var(--burnt); }
+  .dot.teal { background: var(--teal); }
+  .dot.blue { background: var(--blue); }
+  .dot.amber { background: var(--amber); }
+  .dot.violet { background: var(--violet); }
+  .dot.lime { background: var(--lime); }
+  .dot.sky { background: var(--sky); }
+  .dot.rose { background: var(--rose); }
+
+  .sub-text {
+    color: var(--text-sub);
+    font-size: 13.5px;
+    line-height: 1.8;
+  }
+
+  .sub-text strong { color: var(--text); font-weight: 700; }
+
+  .impact {
+    margin-top: 8px;
+    font-size: 12.5px;
+    color: var(--burnt);
+    font-weight: 600;
+    font-style: italic;
+  }
+
+  /* ── Grid layouts ── */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+  }
+
+  .grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  .grid-5 {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+  }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3, .grid-4, .grid-5 { grid-template-columns: 1fr; }
+    .flow-h { flex-direction: column; }
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .grid-3 { grid-template-columns: 1fr 1fr; }
+    .grid-4 { grid-template-columns: 1fr 1fr; }
+    .grid-5 { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  /* ── Comparison card ── */
+  .feature-box {
+    background: var(--bg-warm);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+    transition: border-color .2s, box-shadow .2s;
+  }
+
+  .feature-box:hover {
+    border-color: var(--border-light);
+    box-shadow: 0 2px 10px rgba(140, 100, 60, 0.08);
+  }
+
+  .feature-box .icon { font-size: 24px; margin-bottom: 6px; }
+
+  .feature-box .label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .feature-box .desc {
+    font-size: 11.5px;
+    color: var(--text-dim);
+    margin-top: 2px;
+    line-height: 1.5;
+  }
+
+  /* ── Code block ── */
+  .code {
+    background: #1e1710;
+    border: 1px solid #3a2e22;
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.75;
+    color: #d4c8b8;
+    overflow-x: auto;
+    margin: 10px 0;
+  }
+
+  .code .cm { color: #7a6b5a; }
+  .code .kw { color: #e07a5f; }
+  .code .st { color: #8cb8d4; }
+  .code .fn { color: #c49ed4; }
+  .code .or { color: #e8945a; }
+
+  /* ── Table ── */
+  .tbl {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    margin: 10px 0;
+    font-size: 13px;
+  }
+
+  .tbl th {
+    background: var(--burnt);
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .tbl td {
+    padding: 9px 14px;
+    border-top: 1px solid var(--border);
+    color: var(--text-sub);
+    vertical-align: top;
+    background: var(--bg-card);
+  }
+
+  .tbl td code {
+    background: var(--bg-inner);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--burnt-dark);
+    border: 1px solid var(--border);
+  }
+
+  .tbl tr:hover td { background: var(--bg-warm); }
+
+  /* ── Pill / Tag ── */
+  .pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+
+  .pill.burnt { background: var(--burnt); color: #fff; }
+  .pill.teal { background: var(--teal); color: #fff; }
+  .pill.blue { background: var(--blue); color: #fff; }
+
+  /* ── Tool logos ── */
+  .tool-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 10px 0;
+  }
+
+  .tool-tag {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    box-shadow: 0 1px 3px rgba(140,100,60,0.06);
+  }
+
+  .tool-tag .emoji { font-size: 16px; }
+
+  /* ── Flow ── */
+  .flow-h {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+    margin: 14px 0;
+  }
+
+  .flow-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    flex: 1;
+    min-width: 100px;
+    box-shadow: 0 1px 4px rgba(140,100,60,0.06);
+  }
+
+  .flow-box .small {
+    font-size: 10.5px;
+    color: var(--text-dim);
+    font-weight: 400;
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+
+  .flow-arrow {
+    color: var(--burnt);
+    font-size: 16px;
+    padding: 0 4px;
+    flex-shrink: 0;
+    font-weight: 700;
+  }
+
+  /* ── Callout ── */
+  .callout {
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 10px 0;
+    font-size: 13px;
+    color: var(--text-sub);
+  }
+
+  .callout.tip { background: rgba(13, 138, 124, 0.07); border-left: 3px solid var(--teal); }
+  .callout.warn { background: rgba(184, 119, 8, 0.07); border-left: 3px solid var(--amber); }
+  .callout.info { background: rgba(37, 99, 176, 0.06); border-left: 3px solid var(--blue); }
+
+  /* ── List ── */
+  .list {
+    list-style: none;
+    font-size: 13px;
+    color: var(--text-sub);
+    line-height: 2;
+  }
+
+  .list li::before {
+    content: '→';
+    color: var(--burnt);
+    margin-right: 8px;
+    font-weight: 700;
+  }
+
+  .check-list {
+    list-style: none;
+    font-size: 13px;
+    color: var(--text-sub);
+    line-height: 2;
+  }
+
+  .check-list li::before {
+    content: '☑';
+    margin-right: 8px;
+    color: var(--teal);
+  }
+
+  /* ── Link style ── */
+  .link-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+    font-size: 12px;
+  }
+
+  .link-tag {
+    color: var(--burnt);
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .link-tag::before { content: '🔗'; font-size: 11px; }
+
+  /* ── Section label ── */
+  .sec-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    color: var(--text-dim);
+  }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--text-dim);
+    font-size: 12px;
+    border-top: 2px solid var(--burnt);
+    margin-top: 24px;
+  }
+
+  .footer a { color: var(--burnt); text-decoration: none; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- ━━ HEADER ━━ -->
+  <div class="header">
+    <h1>Master <span class="hl">Claude Code</span></h1>
+    <div class="sub">The Complete Guide for Everyone</div>
+    <div class="meta">
+      <span>v 1.0, January 2026</span>
+      <span>Aakash Gupta</span>
+    </div>
+  </div>
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       BLOCK 1: Why Claude Code Changes Everything
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <div class="block">
+    <div class="block-head">
+      <div class="block-num">1</div>
+      <h2>Why Claude Code Changes Everything</h2>
+    </div>
+    <div class="block-body">
+
+      <div class="grid-2">
+        <div>
+          <div class="sec-label">Before — Chat Window</div>
+          <ul class="list">
+            <li>Chat window limitations</li>
+            <li>Upload limits</li>
+            <li>Sessions expire</li>
+            <li>You do everything manually</li>
+          </ul>
+        </div>
+        <div>
+          <div class="sec-label">After — Claude Code</div>
+          <ul class="list">
+            <li>Full system access</li>
+            <li>All files, any size</li>
+            <li>Hours-long tasks</li>
+            <li>AI teammates</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="sub-block" style="margin-top: 14px;">
+        <div class="sub-title"><span class="dot burnt"></span> From Assistant to Operating System</div>
+        <div class="sub-text">
+          Claude Code transforms AI from a chat tool you visit into an operating system layer that runs across your entire workflow. It's the difference between asking someone for help and having a capable teammate who can actually execute.
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top: 14px;">
+        <div class="sub-block">
+          <div class="sub-title"><span class="dot teal"></span> MCP Connections (200+ Tools)</div>
+          <div class="sub-text">
+            Connect to GitHub, Notion, Slack, Jira, databases, APIs — Claude works inside your existing stack.
+          </div>
+          <div class="impact">Impact: "One interface for your entire tool ecosystem"</div>
+        </div>
+        <div class="sub-block">
+          <div class="sub-title"><span class="dot blue"></span> Autonomous Multi-Agent Work</div>
+          <div class="sub-text">
+            Subtasks work in parallel, checkpoints let you rewind, background tasks run while you work.
+          </div>
+          <div class="impact">Impact: "Delegate like you have 5 junior employees"</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       BLOCK 2: What Claude Code Can Do
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <div class="block">
+    <div class="block-head">
+      <div class="block-num">2</div>
+      <h2>What Claude Code Can Do</h2>
+    </div>
+    <div class="block-body">
+
+      <div class="grid-3">
+        <div class="sub-block">
+          <div class="sub-title"><span class="dot burnt"></span> Full File System Access</div>
+          <div class="sub-text">
+            Read, write, create, organize any file on your computer. No upload limits, no restrictions.
+          </div>
+          <div class="impact">Impact: "Process 10,000 files in minutes vs. hours of manual uploads"</div>
+        </div>
+        <div class="sub-block">
+          <div class="sub-title"><span class="dot teal"></span> Tool & Command Execution</div>
+          <div class="sub-text">
+            Run shell commands, execute scripts, manage Git, install packages — all through natural language.
+          </div>
+          <div class="impact">Impact: "Non-coders running bash commands without learning syntax"</div>
+        </div>
+        <div class="sub-block">
+          <div class="sub-title"><span class="dot blue"></span> MCP Connections (200+ Tools)</div>
+          <div class="sub-text">
+            Connect to GitHub, Notion, Slack, Jira, databases, APIs — Claude works inside your existing stack.
+          </div>
+          <div class="impact">Impact: "One interface for your entire tool ecosystem"</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       BLOCK 3: The Claude Code Workflow
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <div class="block">
+    <div class="block-head">
+      <div class="block-num">3</div>
+      <h2>The Claude Code Workflow</h2>
+    </div>
+    <div class="block-body">
+
+      <div class="flow-h">
+        <div class="flow-box" style="border-color: var(--burnt);">
+          <strong>Analyze & Research</strong>
+          <div class="small">Synthesize feedback, research competitors, extract insights, read & summarize files</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="border-color: var(--amber);">
+          <strong>Plan & Decide</strong>
+          <div class="small">Draft PRDs from notes, create roadmap priorities, generate strategy options, build decision frameworks</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="border-color: var(--teal);">
+          <strong>Create & Execute</strong>
+          <div class="small">Generate presentations, write code/prototypes, create reports and docs, build dashboards</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="border-color: var(--blue);">
+          <strong>Scale & Repeat</strong>
+          <div class="small">Set up workflows, connect tools via MCP, create reusable skills, schedule and batch tasks</div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top: 14px;">
+        <div class="sub-block">
+          <div class="sub-title"><span class="dot amber"></span> For Product Managers</div>
+          <div class="sub-text">
+            PRD from meeting transcript → Jira tickets auto-created → Slack summary posted → Dashboard updated
+          </div>
+        </div>
+        <div class="sub-block">
+          <div class="link-row">
+            <span class="link-tag">AI PRD Guide</span>
+            <span class="link-tag">AI Roadmap Guide</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       BLOCK 4: Getting Started
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <div class="block">
+    <div class="block-head">
+      <div class="block-num">4</div>
+      <h2>Getting Started</h2>
+    </div>
+    <div class="block-body">
+
+      <div class="grid-2">
+        <div class="sub-block">
+          <div class="sub-title"><span class="dot burnt"></span> Recommended Setup Path</div>
+          <div class="sub-text"><strong>Best Experience: Use with Cursor</strong></div>
+          <ol class="list" style="list-style: none; counter-reset: steps;">
+            <li>1. Download Cursor (cursor.com)</li>
+            <li>2. Open your project folder in Cursor</li>
+            <li>3. Open terminal inside Cursor (View → Terminal)</li>
+            <li>4. Type <code>claude</code> and press Enter</li>
+            <li>5. Authenticate via browser popup</li>
+          </ol>
+        </div>
+        <div class="sub-block">
+          <div class="sub-title"><span class="dot teal"></span> Alternative: Direct Terminal</div>
+          <div class="code" style="margin: 8px 0;">
+            <span class="cm"># Mac/Linux</span><br>
+            <span class="st">curl -fsSL https://claude.ai/install.sh | bash</span><br><br>
+            <span class="cm"># Windows (PowerShell)</span><br>
+            <span class="st">irm https://claude.ai/install.ps1 | iex</span><br><br>
+            <span class="cm"># Then navigate to your folder</span><br>
+            <span class="kw">cd</span> <span class="st">~/your-project-folder</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-block" style="margin-top: 14px;">
+        <div class="sub-title"><span class="dot amber"></span> Requirements Checklist</div>
+        <ul class="check-list">
+          <li>macOS 13+, Ubuntu 20+, or Windows 10+ (WSL/Git Bash)</li>
+          <li>Claude Pro ($20/mo), Max ($100-200/mo), or API credits</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       BLOCK 5: Connect Everything (MCP)
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <div class="block">
+    <div class="block-head">
+      <div class="block-num">5</div>
+      <h2>Connect Everything (MCP)</h2>
+    </div>
+    <div class="block-body">
+
+      <div class="sub-block">
+        <div class="sub-title"><span class="dot violet"></span> What is MCP?</div>
+        <div class="sub-text">
+          "Model Context Protocol — an open standard that connects Claude to your tools. Think of it as USB-C for AI: one protocol, hundreds of connections."
+        </div>
+      </div>
+
+      <div class="sec-label" style="margin-top: 14px;">Developer Tools</div>
+      <div class="tool-grid">
+        <div class="tool-tag"><span class="emoji">🐙</span> GitHub</div>
+        <div class="tool-tag"><span class="emoji">🔍</span> Sentry</div>
+        <div class="tool-tag"><span class="emoji">📐</span> Linear</div>
+        <div class="tool-tag"><span class="emoji">🦊</span> GitLab</div>
+      </div>
+
+      <div class="sec-label" style="margin-top: 10px;">Productivity</div>
+      <div class="tool-grid">
+        <div class="tool-tag"><span class="emoji">📝</span> Notion</div>
+        <div class="tool-tag"><span class="emoji">💬</span> Slack</div>
+      </div>
+
+      <div class="sec-label" style="margin-top: 10px;">Data & Research</div>
+      <div class="tool-grid">
+        <div class="tool-tag"><span class="emoji">🔎</span> Perplexity</div>
+        <div class="tool-tag"><span class="emoji">🐘</span> PostgreSQL</div>
+        <div class="tool-tag"><span class="emoji">🦁</span> Brave</div>
+        <div class="tool-tag"><span class="emoji">📁</span> Filesystem</div>
+      </div>
+
+      <div class="sec-label" style="margin-top: 10px;">Communication</div>
+      <div class="tool-grid">
+        <div class="tool-tag"><span class="emoji">📧</span> Gmail</div>
+        <div class="tool-tag"><span class="emoji">📊</span> Typefully</div>
+        <div class="tool-tag"><span class="emoji">📌</span> Buffer</div>
+        <div class="tool-tag"><span class="emoji">🎮</span> Discord</div>
+      </div>
+
+      <div class="sub-block" style="margin-top: 14px;">
+        <div class="sub-title"><span class="dot teal"></span> Quick Add Command</div>
+        <div class="code">
+          <span class="kw">claude mcp add</span> <span class="st">--transport http notion https://mcp.notion.com/mcp</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       BLOCK 6: Essential Commands
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <div class="block">
+    <div class="block-head">
+      <div class="block-num">6</div>
+      <h2>Essential Commands</h2>
+    </div>
+    <div class="block-body">
+
+      <div class="sub-block">
+        <div class="sub-title"><span class="dot burnt"></span> Why Commands?</div>
+        <div class="sub-text">
+          Commands give you precise control. Instead of typing long instructions, one command triggers complex actions.
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top: 14px;">
+        <div>
+          <div class="sec-label">Slash Commands (type / in Claude Code)</div>
+          <table class="tbl">
+            <thead>
+              <tr><th>Command</th><th>What It Does</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>/help</code></td><td>Show all available commands</td></tr>
+              <tr><td><code>/clear</code></td><td>Reset context (use between tasks)</td></tr>
+              <tr><td><code>/compact</code></td><td>Compress conversation to save tokens</td></tr>
+              <tr><td><code>/model</code></td><td>Switch between Opus/Sonnet/Haiku</td></tr>
+              <tr><td><code>/mcp</code></td><td>Check MCP server connections</td></tr>
+              <tr><td><code>/doctor</code></td><td>Diagnose installation issues</td></tr>
+              <tr><td><code>/config</code></td><td>Open settings</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <div class="sec-label">File References (type @ to reference)</div>
+          <table class="tbl">
+            <thead>
+              <tr><th>Syntax</th><th>Example</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>@filename</code></td><td>@report.csv</td></tr>
+              <tr><td><code>@folder/</code></td><td>@data/</td></tr>
+              <tr><td>Tab key</td><td>Autocomplete paths</td></tr>
+            </tbody>
+          </table>
+
+          <div class="sec-label" style="margin-top: 16px;">Keyboard Shortcuts</div>
+          <table class="tbl">
+            <thead>
+              <tr><th>Action</th><th>Keys</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Cancel/Stop</td><td>Esc</td></tr>
+              <tr><td>Rewind checkpoint</td><td>Esc twice</td></tr>
+              <tr><td>Paste image</td><td>Ctrl+V (not Cmd+V on Mac)</td></tr>
+              <tr><td>Run shell directly</td><td>Start with !</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       BLOCK 7: Skills & CLAUDE.md
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <div class="block">
+    <div class="block-head">
+      <div class="block-num">7</div>
+      <h2>Skills & CLAUDE.md</h2>
+    </div>
+    <div class="block-body">
+
+      <div class="grid-2">
+        <div>
+          <div class="sub-block">
+            <div class="sub-title"><span class="dot teal"></span> Claude Skills (Reusable Automations)</div>
+            <div class="sub-text">
+              Task-specific instruction packages that Claude auto-loads when relevant.
+            </div>
+
+            <div class="sec-label" style="margin-top: 12px;">Folder Structure</div>
+            <div class="code">
+              <span class="st">~/.claude/skills/</span><br>
+              <span class="st">├── linkedin-writer/</span><br>
+              <span class="st">│   └── SKILL.md</span><br>
+              <span class="st">├── prd-generator/</span><br>
+              <span class="st">│   └── SKILL.md</span><br>
+              <span class="st">└── data-cleaner/</span><br>
+              <span class="st">    └── SKILL.md</span>
+            </div>
+
+            <div class="sec-label" style="margin-top: 12px;">Built-in Skills</div>
+            <ul class="list">
+              <li><strong>docx</strong> — Word documents</li>
+              <li><strong>xlsx</strong> — Spreadsheets</li>
+              <li><strong>pptx</strong> — Presentations</li>
+              <li><strong>pdf</strong> — PDF processing</li>
+            </ul>
+          </div>
+        </div>
+
+        <div>
+          <div class="sub-block">
+            <div class="sub-title"><span class="dot amber"></span> CLAUDE.md (Project Memory)</div>
+            <div class="sub-text">
+              A markdown file that gives Claude permanent context about your project.
+            </div>
+
+            <div class="code" style="margin-top: 12px;">
+              <span class="cm"># Example CLAUDE.md:</span><br><br>
+              <span class="or"># Project: Marketing Dashboard</span><br>
+              <span class="or">## Key Commands</span><br>
+              <span class="st">- npm run build</span><br>
+              <span class="st">- npm test</span><br><br>
+              <span class="or">## Style Guide</span><br>
+              <span class="st">- Use TypeScript</span><br>
+              <span class="st">- Follow existing patterns</span><br><br>
+              <span class="or">## Important Context</span><br>
+              <span class="st">- Main data source: data/analytics.csv</span><br>
+              <span class="st">- Deploy target: Vercel</span>
+            </div>
+
+            <div class="sec-label" style="margin-top: 12px;">Where to Place</div>
+            <ul class="list">
+              <li><strong>Global:</strong> ~/.claude/CLAUDE.md</li>
+              <li><strong>Project:</strong> /CLAUDE.md</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       BLOCK 8: Prompting Techniques
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <div class="block">
+    <div class="block-head">
+      <div class="block-num">8</div>
+      <h2>Prompting Techniques</h2>
+    </div>
+    <div class="block-body">
+
+      <div class="grid-2">
+        <div>
+          <table class="tbl">
+            <thead>
+              <tr><th>Technique</th><th>When to Use</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Be Specific</strong></td>
+                <td>Always. "Clean this CSV" → "Remove rows where column B is empty, dedupe on email"</td>
+              </tr>
+              <tr>
+                <td><strong>Give Examples</strong></td>
+                <td>When output format matters. Show 1-2 examples of what you want.</td>
+              </tr>
+              <tr>
+                <td><strong>Chain Steps</strong></td>
+                <td>Complex tasks. "First analyze, then summarize, then create action items"</td>
+              </tr>
+              <tr>
+                <td><strong>Set Constraints</strong></td>
+                <td>Quality control. "Max 500 words" or "Only use data from 2024"</td>
+              </tr>
+              <tr>
+                <td><strong>Assign Roles</strong></td>
+                <td>Expert needed. "Act as a data analyst reviewing this dataset"</td>
+              </tr>
+              <tr>
+                <td><strong>Use /clear</strong></td>
+                <td>Between unrelated tasks to reset context</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <div class="sub-block">
+            <div class="sub-title"><span class="dot violet"></span> Pro Pattern: Checkpoint + Iterate</div>
+            <div class="sub-text">
+              <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 6px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="pill burnt">①</span>
+                  <span>Ask Claude to make a plan first</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="pill burnt">②</span>
+                  <span>Review the plan before execution</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="pill burnt">③</span>
+                  <span>Let it create checkpoints</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="pill burnt">④</span>
+                  <span>Rewind (Esc twice) if something goes wrong</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="pill burnt">⑤</span>
+                  <span>Iterate with specific feedback</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       BLOCK 9: Resources & Further Learning
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <div class="block">
+    <div class="block-head">
+      <div class="block-num">9</div>
+      <h2>Resources & Further Learning</h2>
+    </div>
+    <div class="block-body">
+
+      <div class="grid-3">
+        <div class="sub-block">
+          <div class="sub-title"><span class="dot burnt"></span> Official Docs</div>
+          <ul class="list">
+            <li>Setup Guide</li>
+            <li>MCP Reference</li>
+            <li>Best Practices</li>
+          </ul>
+          <div class="link-row">
+            <span class="link-tag">code.claude.com/docs/en/setup</span>
+          </div>
+        </div>
+
+        <div class="sub-block">
+          <div class="sub-title"><span class="dot teal"></span> From Product Growth</div>
+          <ul class="list">
+            <li>Claude Code Pro Guide</li>
+            <li>Skills Deep Dive</li>
+            <li>Downloadable Skills</li>
+            <li>AI Agents Guide</li>
+            <li>Prompting Guide</li>
+          </ul>
+        </div>
+
+        <div class="sub-block">
+          <div class="sub-title"><span class="dot amber"></span> Pricing Quick Reference</div>
+          <table class="tbl">
+            <thead>
+              <tr><th>Plan</th><th>Monthly</th><th>Best For</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Pro</td><td>$20</td><td>Light usage, short tasks</td></tr>
+              <tr><td>Max 5x</td><td>$100</td><td>Daily use, larger projects</td></tr>
+              <tr><td>Max 20x</td><td>$200</td><td>Power users, heavy automation</td></tr>
+              <tr><td>API</td><td>Pay-per-use</td><td>CI/CD, enterprise pipelines</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    Master Claude Code — The Complete Guide for Everyone · v1.0, January 2026<br>
+    Original by <a href="https://news.aakashg.com">Aakash Gupta</a> · HTML conversion
+  </div>
+
+</div>
+
+</body>
+</html>

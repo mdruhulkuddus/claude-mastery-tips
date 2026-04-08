@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Token Optimization Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #0a0e17;
+    --bg-secondary: #111827;
+    --bg-card: #1a2332;
+    --bg-card-hover: #1f2b3d;
+    --accent-blue: #3b82f6;
+    --accent-cyan: #06b6d4;
+    --accent-emerald: #10b981;
+    --accent-amber: #f59e0b;
+    --accent-rose: #f43f5e;
+    --accent-purple: #a855f7;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --border: #1e293b;
+    --border-light: #334155;
+    --gradient-blue: linear-gradient(135deg, #3b82f6, #06b6d4);
+    --gradient-emerald: linear-gradient(135deg, #10b981, #06b6d4);
+    --gradient-amber: linear-gradient(135deg, #f59e0b, #f97316);
+    --gradient-rose: linear-gradient(135deg, #f43f5e, #a855f7);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Noto Sans Bengali', 'Plus Jakarta Sans', sans-serif;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  /* Ambient background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: 
+      radial-gradient(ellipse at 20% 50%, rgba(59, 130, 246, 0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(6, 182, 212, 0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 80%, rgba(168, 85, 247, 0.04) 0%, transparent 50%);
+    z-index: -1;
+    animation: ambientShift 20s ease-in-out infinite alternate;
+  }
+
+  @keyframes ambientShift {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(-2%, -1%) scale(1.02); }
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  /* Hero Section */
+  .hero {
+    text-align: center;
+    padding: 60px 20px 50px;
+    position: relative;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 13px;
+    color: var(--accent-blue);
+    margin-bottom: 24px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    letter-spacing: 0.5px;
+  }
+
+  .hero-badge .dot {
+    width: 6px;
+    height: 6px;
+    background: var(--accent-emerald);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .hero h1 {
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 800;
+    line-height: 1.3;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #f1f5f9 0%, #94a3b8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero h1 span {
+    background: var(--gradient-blue);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero p {
+    font-size: 16px;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.9;
+  }
+
+  /* Section Headers */
+  .section {
+    margin: 50px 0;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 30px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .section-icon.blue { background: rgba(59, 130, 246, 0.15); }
+  .section-icon.emerald { background: rgba(16, 185, 129, 0.15); }
+  .section-icon.amber { background: rgba(245, 158, 11, 0.15); }
+  .section-icon.rose { background: rgba(244, 63, 94, 0.15); }
+  .section-icon.purple { background: rgba(168, 85, 247, 0.15); }
+
+  .section-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .section-header .subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-top: 2px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 16px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-light);
+    transform: translateY(-2px);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .card:hover::before { opacity: 1; }
+  .card.blue-top::before { background: var(--gradient-blue); }
+  .card.emerald-top::before { background: var(--gradient-emerald); }
+  .card.amber-top::before { background: var(--gradient-amber); }
+  .card.rose-top::before { background: var(--gradient-rose); }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-title .emoji {
+    font-size: 20px;
+  }
+
+  .card-body {
+    color: var(--text-secondary);
+    font-size: 14.5px;
+    line-height: 1.9;
+  }
+
+  .card-body strong {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  /* Tip boxes */
+  .tip {
+    background: rgba(16, 185, 129, 0.08);
+    border-left: 3px solid var(--accent-emerald);
+    padding: 14px 18px;
+    border-radius: 0 10px 10px 0;
+    margin: 12px 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+
+  .tip.warning {
+    background: rgba(245, 158, 11, 0.08);
+    border-left-color: var(--accent-amber);
+  }
+
+  .tip.danger {
+    background: rgba(244, 63, 94, 0.08);
+    border-left-color: var(--accent-rose);
+  }
+
+  .tip .tip-label {
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  .tip.warning .tip-label { color: var(--accent-amber); }
+  .tip .tip-label { color: var(--accent-emerald); }
+  .tip.danger .tip-label { color: var(--accent-rose); }
+
+  /* Code blocks */
+  .code-block {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 12px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #c9d1d9;
+    overflow-x: auto;
+  }
+
+  .code-block .comment { color: #6e7681; }
+  .code-block .keyword { color: #ff7b72; }
+  .code-block .string { color: #a5d6ff; }
+  .code-block .cmd { color: #79c0ff; }
+
+  /* Time table */
+  .time-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 16px 0;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .time-table th {
+    background: rgba(59, 130, 246, 0.1);
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent-blue);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    letter-spacing: 0.3px;
+  }
+
+  .time-table td {
+    padding: 12px 16px;
+    font-size: 14px;
+    border-top: 1px solid var(--border);
+    color: var(--text-secondary);
+  }
+
+  .time-table tr:hover td {
+    background: rgba(255,255,255,0.02);
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  .badge.good {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--accent-emerald);
+  }
+
+  .badge.bad {
+    background: rgba(244, 63, 94, 0.15);
+    color: var(--accent-rose);
+  }
+
+  .badge.mid {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--accent-amber);
+  }
+
+  /* Comparison grid */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0;
+  }
+
+  @media (max-width: 600px) {
+    .compare-grid { grid-template-columns: 1fr; }
+  }
+
+  .compare-card {
+    padding: 18px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  .compare-card.do {
+    background: rgba(16, 185, 129, 0.05);
+    border-color: rgba(16, 185, 129, 0.2);
+  }
+
+  .compare-card.dont {
+    background: rgba(244, 63, 94, 0.05);
+    border-color: rgba(244, 63, 94, 0.2);
+  }
+
+  .compare-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  .compare-card.do .compare-label { color: var(--accent-emerald); }
+  .compare-card.dont .compare-label { color: var(--accent-rose); }
+
+  .compare-card ul {
+    list-style: none;
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    line-height: 2;
+  }
+
+  .compare-card ul li::before {
+    margin-right: 8px;
+    font-weight: bold;
+  }
+
+  .compare-card.do ul li::before {
+    content: '✓';
+    color: var(--accent-emerald);
+  }
+
+  .compare-card.dont ul li::before {
+    content: '✗';
+    color: var(--accent-rose);
+  }
+
+  /* Numbered steps */
+  .step {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .step-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 2px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  .step-num.blue {
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--accent-blue);
+  }
+
+  .step-num.emerald {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--accent-emerald);
+  }
+
+  .step-content h4 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .step-content p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-light), transparent);
+    margin: 50px 0;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  /* Scroll animations */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.6s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in:nth-child(1) { animation-delay: 0.05s; }
+  .fade-in:nth-child(2) { animation-delay: 0.1s; }
+  .fade-in:nth-child(3) { animation-delay: 0.15s; }
+  .fade-in:nth-child(4) { animation-delay: 0.2s; }
+  .fade-in:nth-child(5) { animation-delay: 0.25s; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Claude Pro Optimization Guide — 2026
+    </div>
+    <h1>Claude <span>Token বাঁচানোর</span><br>সম্পূর্ণ গাইডলাইন</h1>
+    <p>Claude.ai চ্যাট এবং VS Code-এ Claude Code — দুটোতেই কীভাবে স্মার্টলি কাজ করলে token কম খরচ হবে এবং weekly limit-এ আটকাবেন না।</p>
+  </div>
+
+  <!-- ===== PART 1: Claude.ai ===== -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon blue">💬</div>
+      <div>
+        <h2>পার্ট ১: Claude.ai চ্যাট অপটিমাইজেশন</h2>
+        <div class="subtitle">SMART CHATTING STRATEGIES</div>
+      </div>
+    </div>
+
+    <!-- Timing -->
+    <div class="card blue-top fade-in">
+      <div class="card-title"><span class="emoji">🕐</span> সঠিক সময়ে চ্যাট করুন</div>
+      <div class="card-body">
+        Anthropic peak ও off-peak সময় অনুযায়ী session limit আলাদাভাবে হিসাব করে। <strong>Peak hours-এ একই কাজে বেশি token খরচ হয়।</strong>
+
+        <table class="time-table">
+          <thead>
+            <tr>
+              <th>সময় (বাংলাদেশ)</th>
+              <th>ধরন</th>
+              <th>Token খরচ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>সন্ধ্যা ৬:০০ — রাত ১২:০০</td>
+              <td><span class="badge bad">Peak</span></td>
+              <td>দ্রুত শেষ হয়</td>
+            </tr>
+            <tr>
+              <td>রাত ১২:০০ — সন্ধ্যা ৬:০০</td>
+              <td><span class="badge good">Off-Peak</span></td>
+              <td>অনেক বেশি ব্যবহার পাবেন</td>
+            </tr>
+            <tr>
+              <td>সাপ্তাহিক ছুটির দিন শনিবার-রবিবার (সারাদিন)</td>
+              <td><span class="badge good">Off-Peak</span></td>
+              <td>সবচেয়ে বেশি ব্যবহার</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="tip">
+          <div class="tip-label">💡 Pro Tip</div>
+          ভারী কাজ (বড় ডকুমেন্ট এনালাইসিস, লম্বা কোডিং সেশন) সকাল বা দুপুরে করুন — বাংলাদেশ সময়ে এটা off-peak।
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat style -->
+    <div class="card blue-top fade-in">
+      <div class="card-title"><span class="emoji">✍️</span> চ্যাট করার সঠিক পদ্ধতি</div>
+      <div class="card-body">
+        প্রতিবার আপনি মেসেজ পাঠালে Claude পুরো conversation history আবার প্রসেস করে। তাই চ্যাটের ধরন সরাসরি token খরচকে প্রভাবিত করে।
+
+        <div class="compare-grid">
+          <div class="compare-card do">
+            <div class="compare-label">✓ এভাবে করুন</div>
+            <ul>
+              <li>একটি মেসেজে সব প্রশ্ন একসাথে দিন</li>
+              <li>পরিষ্কার ও নির্দিষ্ট নির্দেশনা দিন</li>
+              <li>নতুন টপিকে নতুন চ্যাট শুরু করুন</li>
+              <li>ফাইল বারবার আপলোড করবেন না</li>
+              <li>প্রয়োজনে output format বলে দিন</li>
+            </ul>
+          </div>
+          <div class="compare-card dont">
+            <div class="compare-label">✗ এভাবে করবেন না</div>
+            <ul>
+              <li>ছোট ছোট মেসেজ পরপর পাঠানো</li>
+              <li>অস্পষ্ট prompt দিয়ে বারবার ঠিক করানো</li>
+              <li>একই চ্যাটে ১০০+ মেসেজ পাঠানো</li>
+              <li>একই ফাইল বারবার আপলোড করা</li>
+              <li>"আরেকটু বড় করো" বলে বারবার revise করানো</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="tip warning">
+          <div class="tip-label">⚠️ গুরুত্বপূর্ণ</div>
+          একটি চ্যাট যত লম্বা হয়, প্রতিটি নতুন মেসেজে তত বেশি token খরচ হয়। ২০-৩০ মেসেজের পর নতুন চ্যাট শুরু করাই ভালো।
+        </div>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="card blue-top fade-in">
+      <div class="card-title"><span class="emoji">⚙️</span> Feature ম্যানেজমেন্ট</div>
+      <div class="card-body">
+        Claude-এর বিভিন্ন feature token খরচ করে। যখন দরকার নেই তখন বন্ধ রাখুন:
+
+        <div class="step">
+          <div class="step-num blue">1</div>
+          <div class="step-content">
+            <h4>Extended Thinking বন্ধ রাখুন</h4>
+            <p>যখন সাধারণ প্রশ্ন করছেন বা সহজ কাজ — thinking mode বন্ধ রাখলে অনেক token বাঁচে। জটিল logic, math, বা coding সমস্যায় চালু করুন।</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num blue">2</div>
+          <div class="step-content">
+            <h4>Web Search প্রয়োজনে বন্ধ করুন</h4>
+            <p>Search and tools সেটিংস থেকে web search বন্ধ করলে token বাঁচে। যখন সত্যিই current info দরকার তখনই চালু করুন।</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num blue">3</div>
+          <div class="step-content">
+            <h4>অপ্রয়োজনীয় MCP Connectors বন্ধ করুন</h4>
+            <p>Google Drive, Gmail ইত্যাদি connector চালু থাকলে প্রতিটি মেসেজে extra token যায়। দরকার না হলে disable করুন।</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num blue">4</div>
+          <div class="step-content">
+            <h4>Project Files পরিষ্কার রাখুন</h4>
+            <p>Project-এ অব্যবহৃত ফাইল থাকলে সেগুলো context-এ token নেয়। নিয়মিত পরিষ্কার করুন।</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Model selection -->
+    <div class="card blue-top fade-in">
+      <div class="card-title"><span class="emoji">🤖</span> সঠিক Model নির্বাচন</div>
+      <div class="card-body">
+        <table class="time-table">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>কখন ব্যবহার করবেন</th>
+              <th>Token খরচ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Haiku 4.5</strong></td>
+              <td>সাধারণ প্রশ্ন, ছোট কাজ, দ্রুত উত্তর</td>
+              <td><span class="badge good">সবচেয়ে কম</span></td>
+            </tr>
+            <tr>
+              <td><strong>Sonnet 4.6</strong></td>
+              <td>মাঝারি জটিল কাজ, কোডিং, রিপোর্ট</td>
+              <td><span class="badge mid">মাঝারি</span></td>
+            </tr>
+            <tr>
+              <td><strong>Opus 4.6</strong></td>
+              <td>অত্যন্ত জটিল বিশ্লেষণ ও reasoning</td>
+              <td><span class="badge bad">সবচেয়ে বেশি</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="tip">
+          <div class="tip-label">💡 Pro Tip</div>
+          সব কাজে Opus ব্যবহার করবেন না। বেশিরভাগ কাজ Sonnet-এ চমৎকারভাবে হয়। Opus-এর token cost প্রায় ১.৭ গুণ বেশি — শুধু সত্যিই জটিল কাজে ব্যবহার করুন।
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ===== PART 2: Claude Code (VS Code) ===== -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon emerald">⌨️</div>
+      <div>
+        <h2>পার্ট ২: VS Code-এ Claude Code অপটিমাইজেশন</h2>
+        <div class="subtitle">CODE SMARTER, NOT HARDER</div>
+      </div>
+    </div>
+
+    <!-- Important warning -->
+    <div class="card rose-top fade-in">
+      <div class="card-title"><span class="emoji">🚨</span> সবচেয়ে গুরুত্বপূর্ণ কথা</div>
+      <div class="card-body">
+        <strong>Claude.ai এবং Claude Code একই usage bucket শেয়ার করে।</strong> অর্থাৎ VS Code-এ Claude Code ব্যবহার করলে সেটাও আপনার Pro plan-এর session ও weekly limit থেকেই কাটে। তাই দুটো মিলিয়ে পরিকল্পনা করুন।
+
+        <div class="tip danger">
+          <div class="tip-label">⚠️ সতর্কতা</div>
+          Claude Code সাধারণ chat-এর চেয়ে অনেক বেশি token খরচ করে, কারণ এটি ক্রমাগত context, files, এবং tool results প্রসেস করে। একটি কোডিং সেশনে হাজার হাজার token যেতে পারে।
+        </div>
+      </div>
+    </div>
+
+    <!-- Context management -->
+    <div class="card emerald-top fade-in">
+      <div class="card-title"><span class="emoji">📦</span> Context ম্যানেজমেন্ট — সবচেয়ে বেশি token বাঁচায়</div>
+      <div class="card-body">
+        Claude Code-এ সবচেয়ে বেশি token যায় <strong>context size</strong>-এ — কত ফাইল ও কোড Claude পড়ছে।
+
+        <div class="step">
+          <div class="step-num emerald">1</div>
+          <div class="step-content">
+            <h4>CLAUDE.md ফাইল ছোট রাখুন</h4>
+            <p>প্রজেক্টের CLAUDE.md-তে শুধু প্রয়োজনীয় নির্দেশনা রাখুন। অতিরিক্ত ব্যাখ্যা ও ভূমিকা বাদ দিন — এই ফাইল প্রতি মেসেজে প্রসেস হয়।</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num emerald">2</div>
+          <div class="step-content">
+            <h4>/compact কমান্ড ব্যবহার করুন</h4>
+            <p>লম্বা সেশনে context বড় হয়ে যায়। <code>/compact</code> কমান্ড দিলে Claude আগের কথোপকথন সারাংশ করে context ছোট করে।</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num emerald">3</div>
+          <div class="step-content">
+            <h4>Milestone-এ নতুন সেশন শুরু করুন</h4>
+            <p>একটি feature শেষ হলে বা একটি বড় পরিবর্তন commit করলে নতুন সেশন শুরু করুন। পুরনো context নতুন কাজে অপ্রয়োজনীয়।</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num emerald">4</div>
+          <div class="step-content">
+            <h4>.claudeignore ব্যবহার করুন</h4>
+            <p>node_modules, build folders, log files ইত্যাদি ignore করুন যাতে Claude এগুলো context-এ না টানে।</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Prompt strategy -->
+    <div class="card emerald-top fade-in">
+      <div class="card-title"><span class="emoji">🎯</span> স্মার্ট Prompting কৌশল</div>
+      <div class="card-body">
+
+        <div class="compare-grid">
+          <div class="compare-card do">
+            <div class="compare-label">✓ Token-efficient Prompts</div>
+            <ul>
+              <li>নির্দিষ্ট ফাইলের নাম বলুন</li>
+              <li>একটি prompt-এ পুরো কাজ বলুন</li>
+              <li>Expected output বর্ণনা করুন</li>
+              <li>Batch edits: একটি diff-এ সব পরিবর্তন</li>
+            </ul>
+          </div>
+          <div class="compare-card dont">
+            <div class="compare-label">✗ Token-wasting Prompts</div>
+            <ul>
+              <li>"এই ফাইলটা ঠিক করো" (কোন ফাইল?)</li>
+              <li>পরপর ছোট ছোট refine করানো</li>
+              <li>"আরেকটু ভালো করো" বলে বারবার</li>
+              <li>একই কাজ ভেঙে ১০ বার বলা</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <span class="comment">// ❌ খারাপ — ৫টি আলাদা prompt (৫ গুণ token)</span><br>
+          <span class="string">"header component বানাও"</span><br>
+          <span class="string">"এবার footer বানাও"</span><br>
+          <span class="string">"sidebar যোগ করো"</span><br>
+          <span class="string">"responsive করো"</span><br>
+          <span class="string">"dark mode যোগ করো"</span><br><br>
+          <span class="comment">// ✅ ভালো — ১টি prompt (১ বার context process)</span><br>
+          <span class="string">"একটি responsive layout বানাও যেখানে<br>
+          header, sidebar, footer থাকবে এবং<br>
+          dark mode support থাকবে।<br>
+          ফাইল: src/components/Layout.tsx"</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Model switching -->
+    <div class="card emerald-top fade-in">
+      <div class="card-title"><span class="emoji">🔄</span> Model Switching কৌশল</div>
+      <div class="card-body">
+        VS Code-এ <code>/model</code> কমান্ড দিয়ে কাজ অনুযায়ী model পরিবর্তন করুন:
+
+        <table class="time-table">
+          <thead>
+            <tr>
+              <th>কাজের ধরন</th>
+              <th>প্রস্তাবিত Model</th>
+              <th>কেন</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>সাধারণ code generation</td>
+              <td><strong>Sonnet</strong></td>
+              <td>দ্রুত, কম token, ভালো output</td>
+            </tr>
+            <tr>
+              <td>Bug fixing, ছোট edits</td>
+              <td><strong>Haiku</strong></td>
+              <td>সবচেয়ে কম token খরচ</td>
+            </tr>
+            <tr>
+              <td>Complex architecture design</td>
+              <td><strong>Opus</strong></td>
+              <td>গভীর reasoning দরকার হলে</td>
+            </tr>
+            <tr>
+              <td>Code review & refactoring</td>
+              <td><strong>Sonnet</strong></td>
+              <td>ভালো balance</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="code-block">
+          <span class="comment"># VS Code-এ model পরিবর্তন</span><br>
+          <span class="cmd">/model</span> <span class="string">sonnet</span> &nbsp;&nbsp;<span class="comment"># বেশিরভাগ কাজে</span><br>
+          <span class="cmd">/model</span> <span class="string">haiku</span> &nbsp;&nbsp;&nbsp;<span class="comment"># ছোট কাজে</span><br>
+          <span class="cmd">/model</span> <span class="string">opus</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># শুধু complex সমস্যায়</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- VS Code specific -->
+    <div class="card emerald-top fade-in">
+      <div class="card-title"><span class="emoji">🔧</span> VS Code-এ Specific টিপস</div>
+      <div class="card-body">
+
+        <div class="step">
+          <div class="step-num emerald">1</div>
+          <div class="step-content">
+            <h4>claude.ai থেকে Usage চেক করুন</h4>
+            <p>VS Code extension-এ <code>/status</code> বা <code>/cost</code> কমান্ড কাজ করে না — এগুলো শুধু Claude Code Terminal (CLI)-এর জন্য। Usage দেখতে browser-এ <strong>claude.ai → Settings → Usage</strong> এ যান। VS Code ও claude.ai একই usage bucket শেয়ার করে, তাই এখানেই সব দেখা যাবে।</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num emerald">2</div>
+          <div class="step-content">
+            <h4>অপ্রয়োজনীয় Extension বন্ধ রাখুন</h4>
+            <p>Claude Code-এর সাথে অন্য AI extension (Copilot ইত্যাদি) একসাথে চললে conflict হতে পারে ও extra resource যায়।</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num emerald">3</div>
+          <div class="step-content">
+            <h4>Plan Mode ব্যবহারে সতর্ক থাকুন</h4>
+            <p>Plan/Explore mode অনেক বেশি token ব্যবহার করে কারণ এটি একাধিক ফাইল scan করে। সাধারণ কাজে এড়িয়ে চলুন।</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ===== DAILY WORKFLOW ===== -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon purple">📋</div>
+      <div>
+        <h2>আদর্শ Daily Workflow</h2>
+        <div class="subtitle">MAXIMUM OUTPUT, MINIMUM TOKENS</div>
+      </div>
+    </div>
+
+    <div class="card fade-in" style="border-left: 3px solid var(--accent-purple);">
+      <div class="card-body">
+        <div class="step">
+          <div class="step-num blue">সকাল</div>
+          <div class="step-content">
+            <h4>🌅 ভারী কাজ করুন (Off-Peak)</h4>
+            <p>বড় codebase refactoring, document analysis, লম্বা কোডিং সেশন — এই সময়ে off-peak rate-এ token কম যাবে। VS Code-এ Claude Code দিয়ে বড় feature তৈরি করুন।</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num blue">দুপুর</div>
+          <div class="step-content">
+            <h4>🌤️ মাঝারি কাজ চালিয়ে যান</h4>
+            <p>Code review, bug fixing, ছোট feature — Sonnet বা Haiku model ব্যবহার করুন। /compact দিয়ে context পরিষ্কার রাখুন।</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num blue">সন্ধ্যা</div>
+          <div class="step-content">
+            <h4>🌆 হালকা কাজ (Peak শুরু)</h4>
+            <p>সন্ধ্যা ৬টার পর Peak time শুরু। এই সময়ে শুধু ছোট প্রশ্ন, quick chat করুন। ভারী কাজ এড়িয়ে চলুন।</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num blue">রাতে</div>
+          <div class="step-content">
+            <h4>🌙 রাত ১২টার পর আবার Off-Peak</h4>
+            <p>যদি রাত জাগার অভ্যাস থাকে, মধ্যরাতের পর আবার off-peak rate পাবেন।</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Quick Reference -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon amber">⚡</div>
+      <div>
+        <h2>Quick Reference চিটশিট</h2>
+        <div class="subtitle">ESSENTIAL COMMANDS & SHORTCUTS</div>
+      </div>
+    </div>
+
+    <div class="card amber-top fade-in">
+      <div class="code-block" style="font-size: 12.5px;">
+        <span class="comment">━━━ Claude Code Terminal (CLI) Commands ━━━</span><br>
+        <span class="comment"># এগুলো শুধু Terminal CLI-তে কাজ করে, VS Code extension-এ নয়</span><br><br>
+        <span class="cmd">/status</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># বাকি quota দেখুন</span><br>
+        <span class="cmd">/cost</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># বর্তমান সেশনের token খরচ</span><br>
+        <span class="cmd">/compact</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># context সংক্ষিপ্ত করুন</span><br>
+        <span class="cmd">/model</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># model পরিবর্তন করুন</span><br>
+        <span class="cmd">/clear</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># সেশন রিসেট করুন</span><br><br>
+        <span class="comment">━━━ VS Code Extension-এ Usage দেখতে ━━━</span><br><br>
+        <span class="string">claude.ai → Settings → Usage</span><br>
+        <span class="comment"># Session (5hr) ও Weekly limit এখানে দেখা যায়</span><br><br>
+        <span class="comment">━━━ Token বাঁচানোর সূত্র ━━━</span><br><br>
+        <span class="string">১টি বড় prompt</span> &gt; <span class="string">৫টি ছোট prompt</span><br>
+        <span class="string">Sonnet (বেশিরভাগ কাজ)</span> &gt; <span class="string">Opus (সব কাজে)</span><br>
+        <span class="string">নির্দিষ্ট file বলা</span> &gt; <span class="string">"পুরো project ঠিক করো"</span><br>
+        <span class="string">Off-peak সময়</span> &gt; <span class="string">Peak সময়</span><br>
+        <span class="string">নতুন chat/session</span> &gt; <span class="string">১০০+ মেসেজের পুরনো chat</span><br>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Claude Pro Token Optimization Guide · April 2026<br>
+    তথ্যসূত্র: Anthropic Help Center, Claude Documentation
+  </div>
+
+</div>
+
+</body>
+</html>

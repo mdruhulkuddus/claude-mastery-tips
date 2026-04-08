@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code Project Guide — Existing Project Training & Feature Development</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08090d;
+    --bg-card: #0f1218;
+    --bg-card-alt: #131720;
+    --bg-hover: #171c26;
+    --surface: #1a1f2e;
+    --border: #1c2233;
+    --border-hover: #2a3348;
+    --text: #e8ecf4;
+    --text-sub: #8b95a8;
+    --text-dim: #5a6478;
+    --orange: #f97316;
+    --orange-dim: rgba(249, 115, 22, 0.12);
+    --teal: #14b8a6;
+    --teal-dim: rgba(20, 184, 166, 0.12);
+    --blue: #3b82f6;
+    --blue-dim: rgba(59, 130, 246, 0.12);
+    --violet: #8b5cf6;
+    --violet-dim: rgba(139, 92, 246, 0.12);
+    --rose: #f43f5e;
+    --rose-dim: rgba(244, 63, 94, 0.12);
+    --lime: #84cc16;
+    --lime-dim: rgba(132, 204, 22, 0.12);
+    --sky: #0ea5e9;
+    --sky-dim: rgba(14, 165, 233, 0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans Bengali', 'Outfit', sans-serif;
+    line-height: 1.85;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(249, 115, 22, 0.04) 0%, transparent 60%),
+      radial-gradient(ellipse at 85% 80%, rgba(20, 184, 166, 0.03) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    text-align: center;
+    padding: 56px 16px 48px;
+  }
+
+  .hero-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--orange-dim);
+    border: 1px solid rgba(249, 115, 22, 0.25);
+    color: var(--orange);
+    padding: 5px 16px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .hero-chip i {
+    width: 6px; height: 6px;
+    background: var(--orange);
+    border-radius: 50%;
+    animation: blink 1.8s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%,100% { opacity: 1; }
+    50% { opacity: .3; }
+  }
+
+  .hero h1 {
+    font-size: clamp(26px, 5vw, 42px);
+    font-weight: 800;
+    line-height: 1.25;
+    margin-bottom: 18px;
+  }
+
+  .hero h1 .hl {
+    background: linear-gradient(135deg, var(--orange), #fb923c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero p {
+    color: var(--text-sub);
+    font-size: 15px;
+    max-width: 580px;
+    margin: 0 auto;
+    line-height: 1.9;
+  }
+
+  /* ── Phase nav ── */
+  .phase-nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0 0 48px;
+  }
+
+  .phase-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-sub);
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .phase-pill .num {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .phase-pill:nth-child(1) .num { background: var(--orange); }
+  .phase-pill:nth-child(2) .num { background: var(--teal); }
+  .phase-pill:nth-child(3) .num { background: var(--blue); }
+  .phase-pill:nth-child(4) .num { background: var(--violet); }
+  .phase-pill:nth-child(5) .num { background: var(--lime); }
+
+  /* ── Section ── */
+  .section { margin-bottom: 56px; }
+
+  .sec-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .sec-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .sec-icon.orange { background: var(--orange-dim); }
+  .sec-icon.teal { background: var(--teal-dim); }
+  .sec-icon.blue { background: var(--blue-dim); }
+  .sec-icon.violet { background: var(--violet-dim); }
+  .sec-icon.lime { background: var(--lime-dim); }
+  .sec-icon.rose { background: var(--rose-dim); }
+  .sec-icon.sky { background: var(--sky-dim); }
+
+  .sec-head h2 {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .sec-head .tag {
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+
+  .sec-head .tag.orange { color: var(--orange); }
+  .sec-head .tag.teal { color: var(--teal); }
+  .sec-head .tag.blue { color: var(--blue); }
+  .sec-head .tag.violet { color: var(--violet); }
+  .sec-head .tag.lime { color: var(--lime); }
+
+  /* ── Card ── */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 14px;
+    transition: background .25s, border-color .25s;
+    position: relative;
+  }
+
+  .card:hover {
+    background: var(--bg-hover);
+    border-color: var(--border-hover);
+  }
+
+  .card-label {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-label .icon { font-size: 18px; }
+
+  .card-text {
+    color: var(--text-sub);
+    font-size: 14px;
+    line-height: 1.9;
+  }
+
+  .card-text strong { color: var(--text); font-weight: 600; }
+
+  /* ── Code ── */
+  .code {
+    background: #060810;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin: 14px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.75;
+    color: #c4cad8;
+    overflow-x: auto;
+    position: relative;
+  }
+
+  .code .file-tag {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 2px 10px;
+    border-radius: 6px;
+    font-size: 10px;
+    color: var(--text-dim);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .code .cm { color: #5a6478; }
+  .code .kw { color: #ff7b72; }
+  .code .st { color: #a5d6ff; }
+  .code .fn { color: #d2a8ff; }
+  .code .vr { color: #79c0ff; }
+  .code .tl { color: var(--teal); }
+  .code .or { color: var(--orange); }
+
+  /* ── Callout ── */
+  .callout {
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-size: 13.5px;
+    color: var(--text-sub);
+    line-height: 1.85;
+  }
+
+  .callout.tip {
+    background: var(--teal-dim);
+    border-left: 3px solid var(--teal);
+  }
+
+  .callout.warn {
+    background: var(--orange-dim);
+    border-left: 3px solid var(--orange);
+  }
+
+  .callout.danger {
+    background: var(--rose-dim);
+    border-left: 3px solid var(--rose);
+  }
+
+  .callout.info {
+    background: var(--blue-dim);
+    border-left: 3px solid var(--blue);
+  }
+
+  .callout .cl {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 4px;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .callout.tip .cl { color: var(--teal); }
+  .callout.warn .cl { color: var(--orange); }
+  .callout.danger .cl { color: var(--rose); }
+  .callout.info .cl { color: var(--blue); }
+
+  /* ── Steps ── */
+  .steps { display: flex; flex-direction: column; gap: 18px; }
+
+  .step {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .step-dot {
+    width: 30px; height: 30px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 2px;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .step-dot.orange { background: var(--orange-dim); color: var(--orange); }
+  .step-dot.teal { background: var(--teal-dim); color: var(--teal); }
+  .step-dot.blue { background: var(--blue-dim); color: var(--blue); }
+  .step-dot.violet { background: var(--violet-dim); color: var(--violet); }
+  .step-dot.lime { background: var(--lime-dim); color: var(--lime); }
+
+  .step h4 {
+    font-size: 14.5px;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+
+  .step p {
+    color: var(--text-sub);
+    font-size: 13.5px;
+    line-height: 1.85;
+  }
+
+  /* ── Flow diagram ── */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 20px 0;
+  }
+
+  .flow-item {
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+
+  .flow-arrow {
+    color: var(--text-dim);
+    font-size: 18px;
+    padding: 0 6px;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .flow-item.active {
+    border-color: var(--teal);
+    background: var(--teal-dim);
+    color: var(--teal);
+  }
+
+  /* ── Divider ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-hover), transparent);
+    margin: 48px 0;
+  }
+
+  /* ── Compare ── */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 14px 0;
+  }
+
+  @media (max-width: 600px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .flow { gap: 4px; }
+    .flow-item { padding: 8px 12px; font-size: 11px; }
+    .flow-arrow { font-size: 14px; padding: 0 3px; }
+  }
+
+  .cmp {
+    padding: 16px;
+    border-radius: 11px;
+    border: 1px solid var(--border);
+  }
+
+  .cmp.good {
+    background: rgba(20, 184, 166, 0.04);
+    border-color: rgba(20, 184, 166, 0.18);
+  }
+
+  .cmp.bad {
+    background: rgba(244, 63, 94, 0.04);
+    border-color: rgba(244, 63, 94, 0.18);
+  }
+
+  .cmp-head {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 10px;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .cmp.good .cmp-head { color: var(--teal); }
+  .cmp.bad .cmp-head { color: var(--rose); }
+
+  .cmp ul {
+    list-style: none;
+    font-size: 13px;
+    color: var(--text-sub);
+    line-height: 2;
+  }
+
+  .cmp.good ul li::before { content: '✓ '; color: var(--teal); font-weight: 700; }
+  .cmp.bad ul li::before { content: '✗ '; color: var(--rose); font-weight: 700; }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    padding: 36px 16px;
+    color: var(--text-dim);
+    font-size: 12px;
+    font-family: 'Outfit', sans-serif;
+    border-top: 1px solid var(--border);
+    margin-top: 32px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- ━━ Hero ━━ -->
+  <div class="hero">
+    <div class="hero-chip"><i></i> VS Code + Claude Code Workflow</div>
+    <h1>Existing Project-এ <span class="hl">Claude Code</span><br>Training ও Feature Development</h1>
+    <p>আপনার চলমান প্রজেক্টকে Claude-কে কীভাবে বোঝাবেন, এবং নতুন feature কীভাবে efficiently ডেভেলপ করবেন — ধাপে ধাপে সম্পূর্ণ গাইড।</p>
+  </div>
+
+  <!-- Phase nav -->
+  <div class="phase-nav">
+    <div class="phase-pill"><span class="num">1</span> Project Setup</div>
+    <div class="phase-pill"><span class="num">2</span> Training</div>
+    <div class="phase-pill"><span class="num">3</span> Feature Plan</div>
+    <div class="phase-pill"><span class="num">4</span> Development</div>
+    <div class="phase-pill"><span class="num">5</span> Review</div>
+  </div>
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       PHASE 1: PROJECT SETUP
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-icon orange">📁</div>
+      <div>
+        <h2>Phase 1: প্রজেক্ট সেটআপ</h2>
+        <div class="tag orange">FOUNDATION — এটা ছাড়া বাকি সব অকার্যকর</div>
+      </div>
+    </div>
+
+    <!-- CLAUDE.md -->
+    <div class="card">
+      <div class="card-label"><span class="icon">📄</span> CLAUDE.md তৈরি করুন — Claude-এর মস্তিষ্ক</div>
+      <div class="card-text">
+        এই ফাইলটি Claude প্রতিটি মেসেজে পড়ে। এটাই Claude-কে আপনার প্রজেক্ট সম্পর্কে "ট্রেইন" করার মূল উপায়। প্রজেক্টের <strong>root folder</strong>-এ তৈরি করুন।
+
+        <div class="code">
+          <span class="file-tag">CLAUDE.md</span>
+          <span class="cm"># Project: Clean Code Bangla</span><br><br>
+          <span class="cm">## Overview</span><br>
+          <span class="st">বাংলায় Clean Code শেখার interactive ওয়েবসাইট।</span><br>
+          <span class="st">Static site — HTML, CSS, JS। কোনো framework নেই।</span><br><br>
+          <span class="cm">## Structure</span><br>
+          <span class="vr">index.html</span> <span class="cm">  — মূল landing page</span><br>
+          <span class="vr">style.css</span> <span class="cm">   — সমস্ত styling</span><br>
+          <span class="vr">script.js</span> <span class="cm">   — interactivity ও navigation</span><br>
+          <span class="vr">chapters/</span> <span class="cm">   — প্রতিটি অধ্যায়ের HTML ফাইল</span><br><br>
+          <span class="cm">## Coding Rules</span><br>
+          <span class="st">- Semantic HTML5 tags ব্যবহার করো</span><br>
+          <span class="st">- BEM naming convention (CSS)</span><br>
+          <span class="st">- Mobile-first responsive design</span><br>
+          <span class="st">- সব content বাংলায়</span><br>
+          <span class="st">- Comments ইংরেজিতে</span><br><br>
+          <span class="cm">## Current State</span><br>
+          <span class="st">- ৫টি অধ্যায় সম্পন্ন</span><br>
+          <span class="st">- Dark mode আছে</span><br>
+          <span class="st">- Mobile responsive</span>
+        </div>
+
+        <div class="callout warn">
+          <div class="cl">⚠️ গুরুত্বপূর্ণ</div>
+          CLAUDE.md যত ছোট রাখবেন তত ভালো। প্রতি মেসেজে এটা পুরোটা প্রসেস হয় = প্রতিবার token খরচ। শুধু <strong>load-bearing information</strong> রাখুন — অতিরিক্ত ব্যাখ্যা বাদ দিন।
+        </div>
+      </div>
+    </div>
+
+    <!-- .claudeignore -->
+    <div class="card">
+      <div class="card-label"><span class="icon">🚫</span> .claudeignore তৈরি করুন — অপ্রয়োজনীয় ফাইল বাদ দিন</div>
+      <div class="card-text">
+        <code>.gitignore</code>-এর মতো কাজ করে। Claude যেসব ফাইল/ফোল্ডার দেখবে না সেগুলো এখানে লিখুন।
+
+        <div class="code">
+          <span class="file-tag">.claudeignore</span>
+          <span class="cm"># Dependencies</span><br>
+          <span class="st">node_modules/</span><br>
+          <span class="st">vendor/</span><br><br>
+          <span class="cm"># Build output</span><br>
+          <span class="st">dist/</span><br>
+          <span class="st">build/</span><br>
+          <span class="st">.cache/</span><br><br>
+          <span class="cm"># System files</span><br>
+          <span class="st">.git/</span><br>
+          <span class="st">.DS_Store</span><br>
+          <span class="st">*.log</span><br><br>
+          <span class="cm"># IDE</span><br>
+          <span class="st">.vscode/</span><br>
+          <span class="st">.idea/</span><br><br>
+          <span class="cm"># Assets (যদি বড় হয়)</span><br>
+          <span class="st">*.mp4</span><br>
+          <span class="st">*.zip</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- File placement -->
+    <div class="card">
+      <div class="card-label"><span class="icon">📍</span> ফাইল কোথায় রাখবেন</div>
+      <div class="card-text">
+        <div class="code">
+          <span class="vr">CLEAN-CODE-BANGLA/</span><br>
+          <span class="tl">├── CLAUDE.md</span> <span class="cm">          ← root-এ</span><br>
+          <span class="tl">├── .claudeignore</span> <span class="cm">      ← root-এ</span><br>
+          <span class="st">├── index.html</span><br>
+          <span class="st">├── style.css</span><br>
+          <span class="st">├── script.js</span><br>
+          <span class="st">├── README.md</span><br>
+          <span class="st">└── chapters/</span><br>
+          <span class="st">    ├── chapter-01.html</span><br>
+          <span class="st">    ├── chapter-02.html</span><br>
+          <span class="st">    └── ...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       PHASE 2: TRAINING (CONTEXT BUILDING)
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-icon teal">🧠</div>
+      <div>
+        <h2>Phase 2: প্রজেক্ট Training — Claude-কে বোঝানো</h2>
+        <div class="tag teal">CONTEXT BUILDING — Claude আসলে "ট্রেইন" হয় না, বোঝানো হয়</div>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <div class="cl">💡 বোঝা দরকার</div>
+      Claude-কে সত্যিকারের "training" করা যায় না যেমন ML model-কে করা হয়। Claude প্রতিটি conversation-এ <strong>CLAUDE.md + আপনার prompt + open files</strong> পড়ে context বোঝে। তাই "training" মানে হলো Claude-কে সঠিক context দেওয়া।
+    </div>
+
+    <div class="card">
+      <div class="card-label"><span class="icon">🗺️</span> Step-by-Step: Claude-কে আপনার প্রজেক্ট বোঝানো</div>
+      <div class="card-text">
+        <div class="steps">
+
+          <div class="step">
+            <div class="step-dot orange">1</div>
+            <div>
+              <h4>প্রথম conversation: প্রজেক্ট পরিচয়</h4>
+              <p>VS Code-এ Claude Code open করে প্রথমেই প্রজেক্টের overview দিন। Claude CLAUDE.md পড়বে, কিন্তু আপনি চাইলে আরো context দিতে পারেন।</p>
+              <div class="code">
+                <span class="cm">// প্রথম prompt — প্রজেক্ট বোঝানো</span><br><br>
+                <span class="or">"আমার প্রজেক্টটি দেখো। এটি বাংলায় Clean Code</span><br>
+                <span class="or">শেখার একটি ওয়েবসাইট। index.html হলো main page,</span><br>
+                <span class="or">chapters/ ফোল্ডারে অধ্যায়গুলো আছে।</span><br>
+                <span class="or">style.css-এ BEM convention ব্যবহার করা হয়েছে।</span><br>
+                <span class="or">প্রজেক্টের structure ও coding pattern বুঝে নাও।"</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-dot orange">2</div>
+            <div>
+              <h4>Pattern বোঝানো: একটি example দেখান</h4>
+              <p>Claude-কে বলুন বিদ্যমান কোড দেখে pattern বুঝতে, যাতে নতুন কোডও একই ধরনের হয়।</p>
+              <div class="code">
+                <span class="or">"chapters/chapter-01.html ফাইলটি দেখো।</span><br>
+                <span class="or">এই pattern অনুযায়ী ভবিষ্যতের সব chapter</span><br>
+                <span class="or">তৈরি হবে। HTML structure, class naming,</span><br>
+                <span class="or">এবং content format বুঝে নাও।"</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-dot orange">3</div>
+            <div>
+              <h4>Rules ও Constraints বলুন</h4>
+              <p>আপনার প্রজেক্টের নির্দিষ্ট নিয়ম যা CLAUDE.md-তে নেই, সেগুলো conversation-এ বলুন।</p>
+              <div class="code">
+                <span class="or">"এই প্রজেক্টে কিছু নিয়ম:</span><br>
+                <span class="or">- কোনো JavaScript framework ব্যবহার করবে না</span><br>
+                <span class="or">- inline CSS ব্যবহার করবে না</span><br>
+                <span class="or">- সব Bengali text UTF-8 encoded হবে</span><br>
+                <span class="or">- accessibility (aria labels) maintain করবে"</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- CLAUDE.md levels -->
+    <div class="card">
+      <div class="card-label"><span class="icon">📚</span> Advanced: Multi-level CLAUDE.md</div>
+      <div class="card-text">
+        বড় প্রজেক্টে আপনি বিভিন্ন ফোল্ডারে আলাদা CLAUDE.md রাখতে পারেন। Claude নিকটতম CLAUDE.md পড়বে।
+
+        <div class="code">
+          <span class="vr">project/</span><br>
+          <span class="tl">├── CLAUDE.md</span> <span class="cm">              ← global rules</span><br>
+          <span class="st">├── src/</span><br>
+          <span class="st">│   </span><span class="tl">├── CLAUDE.md</span> <span class="cm">          ← src-specific rules</span><br>
+          <span class="st">│   ├── components/</span><br>
+          <span class="st">│   │   </span><span class="tl">├── CLAUDE.md</span> <span class="cm">      ← component rules</span><br>
+          <span class="st">│   │   └── ...</span><br>
+          <span class="st">│   └── utils/</span><br>
+          <span class="st">└── chapters/</span><br>
+          <span class="st">    </span><span class="tl">├── CLAUDE.md</span> <span class="cm">          ← chapter-specific rules</span><br>
+          <span class="st">    └── ...</span>
+        </div>
+
+        <div class="callout tip">
+          <div class="cl">💡 Tip</div>
+          আপনার CLEAN-CODE-BANGLA প্রজেক্ট ছোট, তাই root-এ একটি CLAUDE.md-ই যথেষ্ট। Multi-level CLAUDE.md বড় প্রজেক্টের জন্য (React, Next.js ইত্যাদি)।
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       PHASE 3: FEATURE PLANNING
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-icon blue">📋</div>
+      <div>
+        <h2>Phase 3: নতুন Feature পরিকল্পনা</h2>
+        <div class="tag blue">PLAN BEFORE CODE — এতে token ও সময় দুটোই বাঁচে</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label"><span class="icon">🎯</span> Feature Request-এর আদর্শ Structure</div>
+      <div class="card-text">
+        কোড লেখার আগে Claude-কে plan করতে বলুন। এতে ভুল কম হয়, revision কম লাগে, token বাঁচে।
+
+        <div class="code">
+          <span class="cm">// আদর্শ Feature Request Template</span><br><br>
+          <span class="or">"আমি একটি নতুন feature চাই: [feature নাম]</span><br><br>
+          <span class="or">🎯 কী করবে:</span><br>
+          <span class="or">[feature-এর বিস্তারিত বর্ণনা]</span><br><br>
+          <span class="or">📁 কোন ফাইলে পরিবর্তন হবে:</span><br>
+          <span class="or">[নির্দিষ্ট ফাইলের নাম]</span><br><br>
+          <span class="or">⚙️ Technical Details:</span><br>
+          <span class="or">[ব্যবহৃত technology, API, library]</span><br><br>
+          <span class="or">🚫 Constraints:</span><br>
+          <span class="or">[কী করা যাবে না / সীমাবদ্ধতা]</span><br><br>
+          <span class="or">প্রথমে plan দাও, কোড পরে লিখবে।"</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Real example -->
+    <div class="card">
+      <div class="card-label"><span class="icon">💡</span> Real Example: আপনার প্রজেক্টে Search Feature যোগ করা</div>
+      <div class="card-text">
+        ধরুন আপনি CLEAN-CODE-BANGLA প্রজেক্টে search feature যোগ করতে চান:
+
+        <div class="grid-2">
+          <div class="cmp bad">
+            <div class="cmp-head">✗ খারাপ Prompt</div>
+            <ul>
+              <li>"search feature যোগ করো"</li>
+              <li>কোন ফাইলে? কিসে search?</li>
+              <li>Claude guess করবে → ভুল হবে</li>
+              <li>বারবার ঠিক করাতে token যাবে</li>
+            </ul>
+          </div>
+          <div class="cmp good">
+            <div class="cmp-head">✓ ভালো Prompt</div>
+            <ul>
+              <li>কী search করবে: chapters-এর content</li>
+              <li>কোথায় দেখাবে: index.html-এ top-এ</li>
+              <li>কোন ফাইলে কাজ: script.js ও style.css</li>
+              <li>Constraint: No library, vanilla JS only</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="code">
+          <span class="cm">// ভালো prompt example</span><br><br>
+          <span class="or">"আমি chapters-এর content-এ search করার</span><br>
+          <span class="or">feature চাই।</span><br><br>
+          <span class="or">কী করবে: ইউজার text লিখলে chapters/ folder-এর</span><br>
+          <span class="or">সব HTML file-এ content search করে matching</span><br>
+          <span class="or">results দেখাবে।</span><br><br>
+          <span class="or">কোথায়: index.html-এ navigation-এর নিচে একটি</span><br>
+          <span class="or">search bar থাকবে।</span><br><br>
+          <span class="or">ফাইল: index.html (search bar HTML),</span><br>
+          <span class="or">style.css (styling), script.js (search logic)</span><br><br>
+          <span class="or">Constraints: Vanilla JS only, কোনো library নয়।</span><br>
+          <span class="or">বিদ্যমান BEM naming convention follow করবে।</span><br><br>
+          <span class="or">প্রথমে plan দাও, তারপর কোড লিখবে।"</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Workflow -->
+    <div class="card">
+      <div class="card-label"><span class="icon">🔄</span> Plan → Approve → Code Workflow</div>
+      <div class="card-text">
+        <div class="flow">
+          <div class="flow-item">Feature Request</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-item active">Claude Plan দেয়</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-item">আপনি Review করেন</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-item active">Approve / Modify</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-item">Claude কোড লেখে</div>
+        </div>
+
+        <div class="callout tip">
+          <div class="cl">💡 কেন এটা গুরুত্বপূর্ণ</div>
+          Plan ছাড়া সরাসরি কোড লেখালে Claude হয়তো ভুল approach নেবে। তখন "এটা ঠিক করো", "না, এভাবে করো" — এই revision গুলোতে ৩-৫ গুণ বেশি token খরচ হয়। আগে plan approve করলে একবারেই সঠিক কোড আসার সম্ভাবনা অনেক বেশি।
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       PHASE 4: DEVELOPMENT
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-icon violet">🛠️</div>
+      <div>
+        <h2>Phase 4: Feature Development — কোড লেখানো</h2>
+        <div class="tag violet">BUILD SMART — Token-efficient কোডিং কৌশল</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label"><span class="icon">📐</span> কৌশল ১: ছোট ছোট ভাগে কাজ করুন</div>
+      <div class="card-text">
+        একটি বড় feature একবারে না করে ছোট ছোট অংশে ভাগ করুন। প্রতিটি অংশ শেষ করে commit করুন, তারপর পরের অংশে যান।
+
+        <div class="code">
+          <span class="cm">// ❌ একটি giant prompt — ভুলের সম্ভাবনা বেশি</span><br>
+          <span class="or">"পুরো search feature বানাও — HTML, CSS, JS,</span><br>
+          <span class="or">results page, filtering, sorting সব একসাথে"</span><br><br>
+          <span class="cm">// ✅ ভাগ করে করা — প্রতিটি ধাপ verified</span><br>
+          <span class="tl">Prompt 1:</span> <span class="or">"search bar-এর HTML ও CSS বানাও"</span><br>
+          <span class="cm">→ verify → commit</span><br><br>
+          <span class="tl">Prompt 2:</span> <span class="or">"search logic (JS) implement করো"</span><br>
+          <span class="cm">→ verify → commit</span><br><br>
+          <span class="tl">Prompt 3:</span> <span class="or">"results highlighting যোগ করো"</span><br>
+          <span class="cm">→ verify → commit</span>
+        </div>
+
+        <div class="callout tip">
+          <div class="cl">💡 কেন ভাগ করবেন</div>
+          প্রতিটি ধাপে ভুল ধরা সহজ। যদি ৩য় ধাপে সমস্যা হয়, শুধু সেটাই ঠিক করতে হবে — পুরো feature আবার লেখানো লাগবে না। এতে অনেক token বাঁচে।
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label"><span class="icon">🎯</span> কৌশল ২: নির্দিষ্ট ফাইল ও লাইন বলুন</div>
+      <div class="card-text">
+        Claude-কে যত নির্দিষ্ট করে বলবেন, তত কম ফাইল scan করবে = কম token।
+
+        <div class="grid-2">
+          <div class="cmp bad">
+            <div class="cmp-head">Token বেশি যায়</div>
+            <ul>
+              <li>"navigation fix করো"</li>
+              <li>"CSS ঠিক করো"</li>
+              <li>"এই bug fix করো"</li>
+            </ul>
+          </div>
+          <div class="cmp good">
+            <div class="cmp-head">Token কম যায়</div>
+            <ul>
+              <li>"script.js-এর toggleNav() function fix করো"</li>
+              <li>"style.css-এ .nav__menu class-এ mobile breakpoint যোগ করো"</li>
+              <li>"index.html-এর line 45-এ link ভুল, chapters/ch3.html হবে"</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label"><span class="icon">🔗</span> কৌশল ৩: Reference দিন — বিদ্যমান pattern দেখান</div>
+      <div class="card-text">
+        নতুন কিছু তৈরি করাতে চাইলে বিদ্যমান pattern reference হিসেবে দিন। Claude সেই pattern follow করবে।
+
+        <div class="code">
+          <span class="or">"chapters/chapter-01.html-এর মতো structure-এ</span><br>
+          <span class="or">chapter-06.html তৈরি করো।</span><br><br>
+          <span class="or">বিষয়: SOLID Principles</span><br>
+          <span class="or">chapter-01.html-এর HTML structure, CSS classes,</span><br>
+          <span class="or">এবং section layout হুবহু follow করো।</span><br>
+          <span class="or">শুধু content আলাদা হবে।"</span>
+        </div>
+
+        <div class="callout tip">
+          <div class="cl">💡 কেন কাজ করে</div>
+          Claude-কে reference দিলে সে নিজে pattern বোঝে এবং consistent কোড লেখে। আলাদা করে styling rules বলতে হয় না — token বাঁচে, consistency বাড়ে।
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label"><span class="icon">⚡</span> কৌশল ৪: একটি Prompt-এ একাধিক সম্পর্কিত কাজ</div>
+      <div class="card-text">
+        যদি কয়েকটি কাজ একই ফাইলে বা একে অপরের সাথে সম্পর্কিত হয়, একটি prompt-এ দিন।
+
+        <div class="code">
+          <span class="or">"style.css-এ নিচের ৩টি কাজ করো:</span><br><br>
+          <span class="or">1. .chapter__title-এ font-size mobile-এ 24px করো</span><br>
+          <span class="or">2. .chapter__content-এ line-height 1.8 করো</span><br>
+          <span class="or">3. .chapter__code-block-এ dark theme color</span><br>
+          <span class="or">   #1a1b26 background দাও"</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       PHASE 5: REVIEW & ITERATE
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-icon lime">✅</div>
+      <div>
+        <h2>Phase 5: Review, Test ও Iterate</h2>
+        <div class="tag lime">QUALITY CHECK — ভুল ধরুন, CLAUDE.md আপডেট করুন</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label"><span class="icon">🔍</span> Code Review করান</div>
+      <div class="card-text">
+        Claude-কে দিয়েই code review করাতে পারেন — তবে নির্দিষ্ট criteria বলুন।
+
+        <div class="code">
+          <span class="or">"script.js-এ নতুন যোগ করা searchContent()</span><br>
+          <span class="or">function review করো। দেখো:</span><br><br>
+          <span class="or">1. Edge cases handle হয়েছে কিনা</span><br>
+          <span class="or">2. Performance issue আছে কিনা</span><br>
+          <span class="or">3. বিদ্যমান code-এর pattern follow হয়েছে কিনা</span><br>
+          <span class="or">4. কোনো bug আছে কিনা"</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label"><span class="icon">🔄</span> CLAUDE.md আপডেট করুন</div>
+      <div class="card-text">
+        নতুন feature যোগ হলে CLAUDE.md আপডেট করুন যাতে পরবর্তী সেশনে Claude নতুন state জানে।
+
+        <div class="code">
+          <span class="cm">// feature শেষ হলে CLAUDE.md-তে যোগ করুন</span><br><br>
+          <span class="cm">## Current State</span><br>
+          <span class="st">- ৫টি অধ্যায় সম্পন্ন</span><br>
+          <span class="st">- Dark mode আছে</span><br>
+          <span class="st">- Mobile responsive</span><br>
+          <span class="tl">- ✅ Search feature (vanilla JS, chapters content)</span><br>
+          <span class="tl">- ✅ Chapter 6: SOLID Principles যোগ হয়েছে</span>
+        </div>
+
+        <div class="callout warn">
+          <div class="cl">⚠️ মনে রাখুন</div>
+          প্রতিটি নতুন সেশনে Claude আগের কথোপকথন মনে রাখে না। CLAUDE.md-ই একমাত্র জায়গা যেখান থেকে Claude প্রজেক্টের বর্তমান অবস্থা জানতে পারে। তাই নিয়মিত আপডেট রাখুন।
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label"><span class="icon">📊</span> সম্পূর্ণ Workflow — এক নজরে</div>
+      <div class="card-text">
+        <div class="flow">
+          <div class="flow-item" style="border-color: var(--orange);">CLAUDE.md<br>তৈরি</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-item" style="border-color: var(--teal);">Context<br>বোঝানো</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-item" style="border-color: var(--blue);">Feature<br>Plan</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-item" style="border-color: var(--violet);">ভাগ করে<br>Code</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-item" style="border-color: var(--lime);">Review &<br>Update</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ━━━ BONUS: TOKEN-SAVING CHEATSHEET ━━━ -->
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-icon sky">⚡</div>
+      <div>
+        <h2>Bonus: Token-Saving চিটশিট</h2>
+        <div class="tag blue">QUICK REFERENCE</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="code" style="font-size: 12px;">
+        <span class="cm">━━━ সবচেয়ে বেশি Token বাঁচায় ━━━</span><br><br>
+        <span class="tl">১.</span> <span class="st">CLAUDE.md ছোট রাখুন</span> <span class="cm">— প্রতি মেসেজে পড়া হয়</span><br>
+        <span class="tl">২.</span> <span class="st">.claudeignore ব্যবহার করুন</span> <span class="cm">— অপ্রয়োজনীয় ফাইল বাদ</span><br>
+        <span class="tl">৩.</span> <span class="st">নির্দিষ্ট ফাইলের নাম বলুন</span> <span class="cm">— সব scan করা বন্ধ</span><br>
+        <span class="tl">৪.</span> <span class="st">আগে plan, পরে code</span> <span class="cm">— revision ৩-৫x কমে</span><br>
+        <span class="tl">৫.</span> <span class="st">Reference file দেখান</span> <span class="cm">— pattern নিজে বোঝে</span><br><br>
+        <span class="cm">━━━ Common ভুল যা Token নষ্ট করে ━━━</span><br><br>
+        <span class="kw">✗</span> <span class="st">"পুরো project দেখে বলো কী কী সমস্যা"</span> <span class="cm">— সব ফাইল scan = বিশাল token</span><br>
+        <span class="kw">✗</span> <span class="st">"এটা ঠিক করো" (context ছাড়া)</span> <span class="cm">— Claude guess করে = ভুল = revision</span><br>
+        <span class="kw">✗</span> <span class="st">CLAUDE.md-তে ১০০+ লাইন ব্যাখ্যা</span> <span class="cm">— প্রতি prompt-এ token waste</span><br>
+        <span class="kw">✗</span> <span class="st">একই chat-এ ৫০+ মেসেজ</span> <span class="cm">— context বিশাল হয়ে যায়</span><br>
+        <span class="kw">✗</span> <span class="st">Feature শেষে CLAUDE.md update না করা</span> <span class="cm">— পরের সেশনে আবার বোঝাতে হয়</span><br><br>
+        <span class="cm">━━━ আদর্শ Session Pattern ━━━</span><br><br>
+        <span class="tl">Session শুরু</span> → <span class="st">Claude CLAUDE.md পড়ে</span><br>
+        <span class="tl">Feature request</span> → <span class="st">নির্দিষ্ট, reference সহ</span><br>
+        <span class="tl">Claude plan দেয়</span> → <span class="st">আপনি approve/modify করেন</span><br>
+        <span class="tl">Claude code লেখে</span> → <span class="st">আপনি verify করেন</span><br>
+        <span class="tl">Commit করুন</span> → <span class="st">CLAUDE.md update করুন</span><br>
+        <span class="tl">পরের feature</span> → <span class="st">নতুন session (যদি context বড় হয়)</span><br>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Claude Code — Project Training & Feature Development Guide · April 2026<br>
+    তথ্যসূত্র: Anthropic Documentation, Claude Code Best Practices
+  </div>
+
+</div>
+
+</body>
+</html>
