@@ -3,71 +3,7 @@
    A clean, readable, blog-style static site
    =================================================== */
 
-/* --- CSS Custom Properties (Theme) --- */
-:root {
-  /* Light Theme (default) */
-  --bg: #FAFAF8;
-  --bg-secondary: #F2F1EE;
-  --surface: #FFFFFF;
-  --text: #1C1917;
-  --text-secondary: #57534E;
-  --text-muted: #A8A29E;
-  --accent: #D97706;
-  --accent-hover: #B45309;
-  --accent-light: #FEF3C7;
-  --accent-subtle: rgba(217, 119, 6, 0.08);
-  --border: #E7E5E4;
-  --border-light: #F5F5F4;
-  --sidebar-bg: #FFFFFF;
-  --sidebar-active: #FEF3C7;
-  --sidebar-hover: #FAFAF8;
-  --code-bg: #F5F5F4;
-  --code-text: #292524;
-  --code-border: #E7E5E4;
-  --blockquote-bg: #FFFBEB;
-  --blockquote-border: #F59E0B;
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
-  --shadow-lg: 0 8px 24px rgba(0,0,0,0.08);
-  --header-bg: rgba(255, 255, 255, 0.85);
-  --progress-bg: var(--accent);
-  --scrollbar-thumb: #D6D3D1;
-  --scrollbar-track: transparent;
-  --overlay-bg: rgba(0,0,0,0.3);
-  --table-stripe: #FAFAF8;
-  --kbd-bg: #E7E5E4;
-}
-
-[data-theme="dark"] {
-  --bg: #1A1917;
-  --bg-secondary: #22201E;
-  --surface: #2A2826;
-  --text: #E7E5E4;
-  --text-secondary: #A8A29E;
-  --text-muted: #78716C;
-  --accent: #FBBF24;
-  --accent-hover: #F59E0B;
-  --accent-light: rgba(251, 191, 36, 0.12);
-  --accent-subtle: rgba(251, 191, 36, 0.06);
-  --border: #3D3A37;
-  --border-light: #2A2826;
-  --sidebar-bg: #22201E;
-  --sidebar-active: rgba(251, 191, 36, 0.12);
-  --sidebar-hover: #2A2826;
-  --code-bg: #2A2826;
-  --code-text: #E7E5E4;
-  --code-border: #3D3A37;
-  --blockquote-bg: rgba(251, 191, 36, 0.06);
-  --blockquote-border: #FBBF24;
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
-  --shadow-lg: 0 8px 24px rgba(0,0,0,0.4);
-  --header-bg: rgba(26, 25, 23, 0.9);
-  --scrollbar-thumb: #44403C;
-  --overlay-bg: rgba(0,0,0,0.6);
-  --table-stripe: #2A2826;
-  --kbd-bg: #3D3A37;
-}
+/* Variables are defined in theme.css — loaded before this file. */
 
 /* --- Base Reset --- */
 *, *::before, *::after {
@@ -274,8 +210,6 @@ a:hover {
 .main-layout {
   flex: 1;
   display: flex;
-  max-width: 1400px;
-  margin: 0 auto;
   width: 100%;
   position: relative;
 }
@@ -285,7 +219,8 @@ a:hover {
   width: 280px;
   min-width: 280px;
   height: calc(100vh - 60px);
-  position: sticky;
+  position: fixed;
+  left: 0;
   top: 60px;
   background: var(--sidebar-bg);
   border-right: 1px solid var(--border);
@@ -293,6 +228,7 @@ a:hover {
   flex-direction: column;
   overflow: hidden;
   transition: background-color 0.25s ease, border-color 0.25s ease;
+  z-index: 10;
 }
 
 .sidebar-header {
@@ -336,6 +272,7 @@ a:hover {
   font-size: 13px;
   outline: none;
   transition: all 0.2s ease;
+  cursor: text;
 }
 
 .sidebar-search input::placeholder {
@@ -392,12 +329,12 @@ a:hover {
   background: var(--sidebar-active);
   color: var(--accent-hover);
   font-weight: 500;
-  border-color: rgba(217, 119, 6, 0.15);
+  border-color: var(--accent-light);
 }
 
 [data-theme="dark"] .sidebar-link.active {
   color: var(--accent);
-  border-color: rgba(251, 191, 36, 0.15);
+  border-color: var(--accent-light);
 }
 
 .sidebar-link-number {
@@ -439,7 +376,7 @@ a:hover {
   flex: 1;
   min-width: 0;
   position: relative;
-  padding: 0;
+  padding: 0 0 0 280px;
 }
 
 /* Welcome Screen */
@@ -922,6 +859,7 @@ a:hover {
   border-top: 1px solid var(--border);
   background: var(--bg);
   transition: background-color 0.25s ease, border-color 0.25s ease;
+  margin-top: calc(100vh - 60px);
 }
 
 .footer-inner {
@@ -1003,6 +941,10 @@ a:hover {
     min-width: 240px;
   }
 
+  .content-area {
+    padding-left: 240px;
+  }
+
   .tip-container {
     padding: 24px 24px 60px;
   }
@@ -1045,6 +987,11 @@ a:hover {
 
   .content-area {
     width: 100%;
+    padding-left: 0;
+  }
+
+  .site-footer {
+    margin-top: 0;
   }
 
   .tip-container {

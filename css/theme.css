@@ -1,0 +1,174 @@
+/* ===================================================
+   Claude Mastery Tips — Global Theme Variables
+   Source of truth for all colors across every page.
+   Light defaults are based on the warm cream palette
+   from tip-master-claude-code. Dark mode inverts to a
+   deep warm-brown palette, keeping the same accent hue.
+   =================================================== */
+
+:root {
+  /* ── Backgrounds ── */
+  --bg:             #fdf6ee;
+  --bg-secondary:   #faf0e4;
+  --surface:        #ffffff;
+  --surface-alt:    #fef9f3;
+  --surface-inner:  #f7efe5;
+  --surface-muted:  #f0e6d8;
+
+  /* ── Text ── */
+  --text:           #1a1008;
+  --text-secondary: #5e4d3a;
+  --text-muted:     #8c7a66;
+
+  /* ── Accent — burnt orange / terracotta ── */
+  --accent:         #c74a2a;
+  --accent-hover:   #d95530;
+  --accent-dark:    #a33d22;
+  --accent-light:   rgba(199, 74, 42, 0.12);
+  --accent-subtle:  rgba(199, 74, 42, 0.06);
+  --accent-bg:      rgba(199, 74, 42, 0.08);
+
+  /* ── Borders ── */
+  --border:         #e6d5c3;
+  --border-light:   #f0e6d8;   /* lighter, for subtle dividers  */
+  --border-medium:  #d4bfa8;   /* darker, for emphasis borders  */
+
+  /* ── Semantic / category colours ── */
+  --color-teal:     #0d8a7c;
+  --color-teal-bg:  rgba(13, 138, 124, 0.08);
+  --color-blue:     #2563b0;
+  --color-blue-bg:  rgba(37, 99, 176, 0.07);
+  --color-amber:    #b87708;
+  --color-amber-bg: rgba(184, 119, 8, 0.08);
+  --color-violet:   #6d3fc0;
+  --color-violet-bg:rgba(109, 63, 192, 0.07);
+  --color-lime:     #578a0e;
+  --color-lime-bg:  rgba(87, 138, 14, 0.08);
+  --color-rose:     #c0293e;
+  --color-rose-bg:  rgba(192, 41, 62, 0.07);
+  --color-sky:      #0974b8;
+  --color-sky-bg:   rgba(9, 116, 184, 0.07);
+  --color-orange:   #d9610a;
+  --color-orange-bg:rgba(217, 97, 10, 0.10);
+
+  /* ── Gradients ── */
+  --gradient-blue:    linear-gradient(135deg, #3b82f6, #06b6d4);
+  --gradient-emerald: linear-gradient(135deg, #10b981, #06b6d4);
+  --gradient-amber:   linear-gradient(135deg, #f59e0b, #f97316);
+  --gradient-rose:    linear-gradient(135deg, #f43f5e, #a855f7);
+
+  /* ── Sidebar ── */
+  --sidebar-bg:     #ffffff;
+  --sidebar-active: rgba(199, 74, 42, 0.08);
+  --sidebar-hover:  #faf0e4;
+
+  /* ── Code blocks ── */
+  --code-bg:        #1e1710;
+  --code-text:      #d4c8b8;
+  --code-border:    #3a2e22;
+
+  /* ── Blockquote ── */
+  --blockquote-bg:     rgba(199, 74, 42, 0.05);
+  --blockquote-border: #c74a2a;
+
+  /* ── UI chrome ── */
+  --header-bg:      rgba(253, 246, 238, 0.88);
+  --progress-bg:    var(--accent);
+  --overlay-bg:     rgba(0, 0, 0, 0.35);
+  --table-stripe:   #faf0e4;
+  --kbd-bg:         #e6d5c3;
+
+  /* ── Scrollbar ── */
+  --scrollbar-thumb: #d4bfa8;
+  --scrollbar-track: transparent;
+
+  /* ── Shadows ── */
+  --shadow-sm: 0 1px 2px  rgba(140, 100, 60, 0.06);
+  --shadow-md: 0 4px 12px rgba(140, 100, 60, 0.10);
+  --shadow-lg: 0 8px 24px rgba(140, 100, 60, 0.14);
+}
+
+/* ─────────────────────────────────────────
+   DARK MODE
+   Warm dark-brown palette — same accent hue,
+   brightened slightly for contrast on dark bg.
+───────────────────────────────────────── */
+[data-theme="dark"] {
+  /* ── Backgrounds ── */
+  --bg:             #18100a;
+  --bg-secondary:   #211508;
+  --surface:        #2a1d12;
+  --surface-alt:    #231810;
+  --surface-inner:  #32221a;
+  --surface-muted:  #3d2b1e;
+
+  /* ── Text ── */
+  --text:           #f0e0d0;
+  --text-secondary: #b89880;
+  --text-muted:     #7a6050;
+
+  /* ── Accent ── */
+  --accent:         #e86040;
+  --accent-hover:   #f07048;
+  --accent-dark:    #c74a2a;
+  --accent-light:   rgba(232, 96, 64, 0.15);
+  --accent-subtle:  rgba(232, 96, 64, 0.08);
+  --accent-bg:      rgba(232, 96, 64, 0.10);
+
+  /* ── Borders ── */
+  --border:         #3d2a1a;
+  --border-light:   #2a1d12;
+  --border-medium:  #4d3828;
+
+  /* ── Semantic colours — brighter for dark bg ── */
+  --color-teal:     #2dd4bf;
+  --color-teal-bg:  rgba(45, 212, 191, 0.10);
+  --color-blue:     #60a5fa;
+  --color-blue-bg:  rgba(96, 165, 250, 0.10);
+  --color-amber:    #fbbf24;
+  --color-amber-bg: rgba(251, 191, 36, 0.10);
+  --color-violet:   #a78bfa;
+  --color-violet-bg:rgba(167, 139, 250, 0.10);
+  --color-lime:     #a3e635;
+  --color-lime-bg:  rgba(163, 230, 53, 0.10);
+  --color-rose:     #fb7185;
+  --color-rose-bg:  rgba(251, 113, 133, 0.10);
+  --color-sky:      #38bdf8;
+  --color-sky-bg:   rgba(56, 189, 248, 0.10);
+  --color-orange:   #fb923c;
+  --color-orange-bg:rgba(251, 146, 60, 0.12);
+
+  /* ── Gradients (same as light — they look fine on dark) ── */
+  --gradient-blue:    linear-gradient(135deg, #3b82f6, #06b6d4);
+  --gradient-emerald: linear-gradient(135deg, #10b981, #06b6d4);
+  --gradient-amber:   linear-gradient(135deg, #f59e0b, #f97316);
+  --gradient-rose:    linear-gradient(135deg, #f43f5e, #a855f7);
+
+  /* ── Sidebar ── */
+  --sidebar-bg:     #211508;
+  --sidebar-active: rgba(232, 96, 64, 0.12);
+  --sidebar-hover:  #2a1d12;
+
+  /* ── Code blocks ── */
+  --code-bg:        #0f0905;
+  --code-text:      #e0cdb8;
+  --code-border:    #2a1d12;
+
+  /* ── Blockquote ── */
+  --blockquote-bg:     rgba(232, 96, 64, 0.07);
+  --blockquote-border: #e86040;
+
+  /* ── UI chrome ── */
+  --header-bg:      rgba(24, 16, 10, 0.92);
+  --overlay-bg:     rgba(0, 0, 0, 0.60);
+  --table-stripe:   #2a1d12;
+  --kbd-bg:         #3d2a1a;
+
+  /* ── Scrollbar ── */
+  --scrollbar-thumb: #4d3828;
+
+  /* ── Shadows ── */
+  --shadow-sm: 0 1px 2px  rgba(0, 0, 0, 0.22);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.32);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.42);
+}

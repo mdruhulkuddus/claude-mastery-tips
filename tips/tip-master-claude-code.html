@@ -1,503 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Master Claude Code — The Complete Guide</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #fdf6ee;
-    --bg-warm: #faf0e4;
-    --bg-card: #ffffff;
-    --bg-card-alt: #fef9f3;
-    --bg-inner: #f7efe5;
-    --surface: #f0e6d8;
-    --border: #e6d5c3;
-    --border-light: #d4bfa8;
-    --text: #1a1008;
-    --text-sub: #5e4d3a;
-    --text-dim: #8c7a66;
-    --burnt: #c74a2a;
-    --burnt-light: #d95530;
-    --burnt-dark: #a33d22;
-    --burnt-dim: rgba(199, 74, 42, 0.10);
-    --burnt-dim2: rgba(199, 74, 42, 0.05);
-    --burnt-bg: rgba(199, 74, 42, 0.08);
-    --teal: #0d8a7c;
-    --teal-dim: rgba(13, 138, 124, 0.08);
-    --blue: #2563b0;
-    --blue-dim: rgba(37, 99, 176, 0.07);
-    --amber: #b87708;
-    --amber-dim: rgba(184, 119, 8, 0.08);
-    --violet: #6d3fc0;
-    --violet-dim: rgba(109, 63, 192, 0.07);
-    --lime: #578a0e;
-    --lime-dim: rgba(87, 138, 14, 0.08);
-    --rose: #c0293e;
-    --rose-dim: rgba(192, 41, 62, 0.07);
-    --sky: #0974b8;
-    --sky-dim: rgba(9, 116, 184, 0.07);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', 'Noto Sans Bengali', sans-serif;
-    line-height: 1.7;
-    -webkit-font-smoothing: antialiased;
-    background-image:
-      radial-gradient(ellipse at 20% 0%, rgba(199, 74, 42, 0.04) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 100%, rgba(184, 119, 8, 0.03) 0%, transparent 50%);
-  }
-
-  .wrap {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 16px;
-  }
-
-  /* ── Header ── */
-  .header {
-    text-align: center;
-    padding: 48px 16px 36px;
-    border-bottom: 3px solid var(--burnt);
-    margin-bottom: 40px;
-    position: relative;
-    background: linear-gradient(180deg, rgba(199, 74, 42, 0.06) 0%, transparent 100%);
-    border-radius: 16px 16px 0 0;
-  }
-
-  .header h1 {
-    font-size: clamp(30px, 5vw, 50px);
-    font-weight: 900;
-    letter-spacing: -1px;
-    line-height: 1.15;
-    color: var(--text);
-  }
-
-  .header h1 .hl {
-    color: var(--burnt);
-  }
-
-  .header .sub {
-    font-size: 17px;
-    color: var(--text-sub);
-    margin-top: 8px;
-    font-weight: 500;
-  }
-
-  .header .meta {
-    display: inline-flex;
-    gap: 16px;
-    margin-top: 16px;
-    font-size: 12px;
-    color: var(--text-dim);
-    font-weight: 600;
-    letter-spacing: 0.5px;
-  }
-
-  .header .meta span {
-    background: var(--bg-inner);
-    border: 1px solid var(--border);
-    padding: 4px 12px;
-    border-radius: 6px;
-  }
-
-  /* ── Section Block ── */
-  .block {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    margin-bottom: 20px;
-    overflow: hidden;
-    transition: border-color .25s, box-shadow .25s;
-    box-shadow: 0 2px 12px rgba(140, 100, 60, 0.06);
-  }
-
-  .block:hover {
-    border-color: var(--border-light);
-    box-shadow: 0 4px 20px rgba(140, 100, 60, 0.1);
-  }
-
-  .block-head {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 18px 22px;
-    background: var(--burnt);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .block-num {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    background: rgba(255,255,255,0.2);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    font-weight: 800;
-    flex-shrink: 0;
-  }
-
-  .block-head h2 {
-    font-size: 17px;
-    font-weight: 800;
-    color: #fff;
-  }
-
-  .block-body {
-    padding: 22px;
-  }
-
-  /* ── Sub-section ── */
-  .sub-block {
-    background: var(--bg-inner);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 18px;
-    margin-bottom: 14px;
-  }
-
-  .sub-block:last-child { margin-bottom: 0; }
-
-  .sub-title {
-    font-size: 14px;
-    font-weight: 800;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--text);
-  }
-
-  .sub-title .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 3px;
-    flex-shrink: 0;
-  }
-
-  .dot.burnt { background: var(--burnt); }
-  .dot.teal { background: var(--teal); }
-  .dot.blue { background: var(--blue); }
-  .dot.amber { background: var(--amber); }
-  .dot.violet { background: var(--violet); }
-  .dot.lime { background: var(--lime); }
-  .dot.sky { background: var(--sky); }
-  .dot.rose { background: var(--rose); }
-
-  .sub-text {
-    color: var(--text-sub);
-    font-size: 13.5px;
-    line-height: 1.8;
-  }
-
-  .sub-text strong { color: var(--text); font-weight: 700; }
-
-  .impact {
-    margin-top: 8px;
-    font-size: 12.5px;
-    color: var(--burnt);
-    font-weight: 600;
-    font-style: italic;
-  }
-
-  /* ── Grid layouts ── */
-  .grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-  }
-
-  .grid-3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 14px;
-  }
-
-  .grid-4 {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-  }
-
-  .grid-5 {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
-  }
-
-  @media (max-width: 768px) {
-    .grid-2, .grid-3, .grid-4, .grid-5 { grid-template-columns: 1fr; }
-    .flow-h { flex-direction: column; }
-  }
-
-  @media (min-width: 769px) and (max-width: 1024px) {
-    .grid-3 { grid-template-columns: 1fr 1fr; }
-    .grid-4 { grid-template-columns: 1fr 1fr; }
-    .grid-5 { grid-template-columns: repeat(3, 1fr); }
-  }
-
-  /* ── Comparison card ── */
-  .feature-box {
-    background: var(--bg-warm);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px;
-    text-align: center;
-    transition: border-color .2s, box-shadow .2s;
-  }
-
-  .feature-box:hover {
-    border-color: var(--border-light);
-    box-shadow: 0 2px 10px rgba(140, 100, 60, 0.08);
-  }
-
-  .feature-box .icon { font-size: 24px; margin-bottom: 6px; }
-
-  .feature-box .label {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--text);
-  }
-
-  .feature-box .desc {
-    font-size: 11.5px;
-    color: var(--text-dim);
-    margin-top: 2px;
-    line-height: 1.5;
-  }
-
-  /* ── Code block ── */
-  .code {
-    background: #1e1710;
-    border: 1px solid #3a2e22;
-    border-radius: 8px;
-    padding: 14px 16px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    line-height: 1.75;
-    color: #d4c8b8;
-    overflow-x: auto;
-    margin: 10px 0;
-  }
-
-  .code .cm { color: #7a6b5a; }
-  .code .kw { color: #e07a5f; }
-  .code .st { color: #8cb8d4; }
-  .code .fn { color: #c49ed4; }
-  .code .or { color: #e8945a; }
-
-  /* ── Table ── */
-  .tbl {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    border-radius: 10px;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    margin: 10px 0;
-    font-size: 13px;
-  }
-
-  .tbl th {
-    background: var(--burnt);
-    padding: 10px 14px;
-    text-align: left;
-    font-size: 11.5px;
-    font-weight: 700;
-    color: #fff;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-  }
-
-  .tbl td {
-    padding: 9px 14px;
-    border-top: 1px solid var(--border);
-    color: var(--text-sub);
-    vertical-align: top;
-    background: var(--bg-card);
-  }
-
-  .tbl td code {
-    background: var(--bg-inner);
-    padding: 1px 6px;
-    border-radius: 4px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    color: var(--burnt-dark);
-    border: 1px solid var(--border);
-  }
-
-  .tbl tr:hover td { background: var(--bg-warm); }
-
-  /* ── Pill / Tag ── */
-  .pill {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.3px;
-  }
-
-  .pill.burnt { background: var(--burnt); color: #fff; }
-  .pill.teal { background: var(--teal); color: #fff; }
-  .pill.blue { background: var(--blue); color: #fff; }
-
-  /* ── Tool logos ── */
-  .tool-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin: 10px 0;
-  }
-
-  .tool-tag {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 6px 12px;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text);
-    box-shadow: 0 1px 3px rgba(140,100,60,0.06);
-  }
-
-  .tool-tag .emoji { font-size: 16px; }
-
-  /* ── Flow ── */
-  .flow-h {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    flex-wrap: wrap;
-    margin: 14px 0;
-  }
-
-  .flow-box {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 12px;
-    font-weight: 600;
-    text-align: center;
-    flex: 1;
-    min-width: 100px;
-    box-shadow: 0 1px 4px rgba(140,100,60,0.06);
-  }
-
-  .flow-box .small {
-    font-size: 10.5px;
-    color: var(--text-dim);
-    font-weight: 400;
-    margin-top: 2px;
-    line-height: 1.4;
-  }
-
-  .flow-arrow {
-    color: var(--burnt);
-    font-size: 16px;
-    padding: 0 4px;
-    flex-shrink: 0;
-    font-weight: 700;
-  }
-
-  /* ── Callout ── */
-  .callout {
-    border-radius: 8px;
-    padding: 12px 16px;
-    margin: 10px 0;
-    font-size: 13px;
-    color: var(--text-sub);
-  }
-
-  .callout.tip { background: rgba(13, 138, 124, 0.07); border-left: 3px solid var(--teal); }
-  .callout.warn { background: rgba(184, 119, 8, 0.07); border-left: 3px solid var(--amber); }
-  .callout.info { background: rgba(37, 99, 176, 0.06); border-left: 3px solid var(--blue); }
-
-  /* ── List ── */
-  .list {
-    list-style: none;
-    font-size: 13px;
-    color: var(--text-sub);
-    line-height: 2;
-  }
-
-  .list li::before {
-    content: '→';
-    color: var(--burnt);
-    margin-right: 8px;
-    font-weight: 700;
-  }
-
-  .check-list {
-    list-style: none;
-    font-size: 13px;
-    color: var(--text-sub);
-    line-height: 2;
-  }
-
-  .check-list li::before {
-    content: '☑';
-    margin-right: 8px;
-    color: var(--teal);
-  }
-
-  /* ── Link style ── */
-  .link-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 10px;
-    font-size: 12px;
-  }
-
-  .link-tag {
-    color: var(--burnt);
-    text-decoration: none;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .link-tag::before { content: '🔗'; font-size: 11px; }
-
-  /* ── Section label ── */
-  .sec-label {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 8px;
-    color: var(--text-dim);
-  }
-
-  /* ── Footer ── */
-  .footer {
-    text-align: center;
-    padding: 32px 16px;
-    color: var(--text-dim);
-    font-size: 12px;
-    border-top: 2px solid var(--burnt);
-    margin-top: 24px;
-  }
-
-  .footer a { color: var(--burnt); text-decoration: none; font-weight: 600; }
-</style>
-</head>
-<body>
+<div class="tp-master">
 
 <div class="wrap">
 
@@ -617,23 +118,23 @@
     <div class="block-body">
 
       <div class="flow-h">
-        <div class="flow-box" style="border-color: var(--burnt);">
-          <strong>Analyze & Research</strong>
-          <div class="small">Synthesize feedback, research competitors, extract insights, read & summarize files</div>
+        <div class="flow-box" style="border-color: var(--accent);">
+          <strong>Analyze &amp; Research</strong>
+          <div class="small">Synthesize feedback, research competitors, extract insights, read &amp; summarize files</div>
         </div>
         <div class="flow-arrow">→</div>
-        <div class="flow-box" style="border-color: var(--amber);">
-          <strong>Plan & Decide</strong>
+        <div class="flow-box" style="border-color: var(--color-amber);">
+          <strong>Plan &amp; Decide</strong>
           <div class="small">Draft PRDs from notes, create roadmap priorities, generate strategy options, build decision frameworks</div>
         </div>
         <div class="flow-arrow">→</div>
-        <div class="flow-box" style="border-color: var(--teal);">
-          <strong>Create & Execute</strong>
+        <div class="flow-box" style="border-color: var(--color-teal);">
+          <strong>Create &amp; Execute</strong>
           <div class="small">Generate presentations, write code/prototypes, create reports and docs, build dashboards</div>
         </div>
         <div class="flow-arrow">→</div>
-        <div class="flow-box" style="border-color: var(--blue);">
-          <strong>Scale & Repeat</strong>
+        <div class="flow-box" style="border-color: var(--color-blue);">
+          <strong>Scale &amp; Repeat</strong>
           <div class="small">Set up workflows, connect tools via MCP, create reusable skills, schedule and batch tasks</div>
         </div>
       </div>
@@ -733,7 +234,7 @@
         <div class="tool-tag"><span class="emoji">💬</span> Slack</div>
       </div>
 
-      <div class="sec-label" style="margin-top: 10px;">Data & Research</div>
+      <div class="sec-label" style="margin-top: 10px;">Data &amp; Research</div>
       <div class="tool-grid">
         <div class="tool-tag"><span class="emoji">🔎</span> Perplexity</div>
         <div class="tool-tag"><span class="emoji">🐘</span> PostgreSQL</div>
@@ -831,7 +332,7 @@
   <div class="block">
     <div class="block-head">
       <div class="block-num">7</div>
-      <h2>Skills & CLAUDE.md</h2>
+      <h2>Skills &amp; CLAUDE.md</h2>
     </div>
     <div class="block-body">
 
@@ -982,7 +483,7 @@
   <div class="block">
     <div class="block-head">
       <div class="block-num">9</div>
-      <h2>Resources & Further Learning</h2>
+      <h2>Resources &amp; Further Learning</h2>
     </div>
     <div class="block-body">
 
@@ -1037,5 +538,4 @@
 
 </div>
 
-</body>
-</html>
+</div>
