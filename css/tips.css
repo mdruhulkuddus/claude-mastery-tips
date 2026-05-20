@@ -53,8 +53,9 @@
   -webkit-font-smoothing: antialiased;
   background-image:
     radial-gradient(ellipse at 20% 0%, var(--accent-subtle) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 100%, rgba(184, 119, 8, 0.03) 0%, transparent 50%);
+    radial-gradient(ellipse at 80% 100%, var(--color-amber-bg) 0%, transparent 50%);
   min-height: 100vh;
+  container-type: inline-size;  /* grids below respond to this width, not the viewport */
 }
 
 .tp-master .wrap {
@@ -167,14 +168,19 @@
 .tp-master .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
 .tp-master .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
 .tp-master .grid-5 { display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; }
-@media (max-width: 768px) {
-  .tp-master .grid-2, .tp-master .grid-3, .tp-master .grid-4, .tp-master .grid-5 { grid-template-columns: 1fr; }
-  .tp-master .flow-h { flex-direction: column; }
-}
-@media (min-width: 769px) and (max-width: 1024px) {
+/* The tip renders inside a fixed-width content column, so grid reflow must
+   key off the column width (@container), not the viewport width. */
+@container (max-width: 760px) {
   .tp-master .grid-3 { grid-template-columns: 1fr 1fr; }
   .tp-master .grid-4 { grid-template-columns: 1fr 1fr; }
   .tp-master .grid-5 { grid-template-columns: repeat(3,1fr); }
+}
+@container (max-width: 520px) {
+  .tp-master .grid-2,
+  .tp-master .grid-3,
+  .tp-master .grid-4,
+  .tp-master .grid-5 { grid-template-columns: 1fr; }
+  .tp-master .flow-h { flex-direction: column; }
 }
 
 /* Feature box */
@@ -291,11 +297,14 @@
   font-family: 'Noto Sans Bengali', 'Outfit', sans-serif;
   line-height: 1.85;
   -webkit-font-smoothing: antialiased;
+  position: relative;   /* containing block for the ambient ::before */
+  z-index: 0;
+  overflow: hidden;
   min-height: 100vh;
 }
 .tp-training::before {
   content: '';
-  position: fixed; inset: 0;
+  position: absolute; inset: 0;
   background:
     radial-gradient(ellipse at 15% 10%, var(--color-orange-bg) 0%, transparent 60%),
     radial-gradient(ellipse at 85% 80%, var(--color-teal-bg) 0%, transparent 60%);
@@ -495,17 +504,22 @@
   color: var(--text);
   font-family: 'Noto Sans Bengali', 'Plus Jakarta Sans', sans-serif;
   line-height: 1.8;
-  overflow-x: hidden;
+  position: relative;   /* containing block for the ambient ::before */
+  z-index: 0;           /* own stacking context so ::before sits behind content */
+  overflow: hidden;     /* clip the oversized ambient layer */
   min-height: 100vh;
 }
+/* Ambient background — absolute (not fixed) so it stays scoped to this tip
+   and never extends the document scroll height. */
 .tp-token::before {
   content: '';
-  position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
+  position: absolute; top: -10%; left: -10%; width: 120%; height: 120%;
   background:
     radial-gradient(ellipse at 20% 50%, var(--color-blue-bg) 0%, transparent 50%),
     radial-gradient(ellipse at 80% 20%, var(--color-sky-bg) 0%, transparent 50%),
     radial-gradient(ellipse at 50% 80%, var(--color-violet-bg) 0%, transparent 50%);
   z-index: -1;
+  pointer-events: none;
   animation: tp-ambient 20s ease-in-out infinite alternate;
 }
 @keyframes tp-ambient {
@@ -513,7 +527,7 @@
   100% { transform: translate(-2%,-1%) scale(1.02); }
 }
 
-.tp-token .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+.tp-token .container { max-width: 900px; margin: 0 auto; padding: 20px 20px 0; }
 
 /* Hero */
 .tp-token .hero { text-align: center; padding: 60px 20px 50px; position: relative; }
@@ -636,11 +650,14 @@
 
 /* Steps */
 .tp-token .step { display: flex; gap: 16px; margin-bottom: 20px; }
+/* min-width + padding so the badge fits a digit (1,2,3…) or a short word
+   label ("সকাল", "সন্ধ্যা"…) used in the daily-workflow steps. */
 .tp-token .step-num {
-  width: 32px; height: 32px; border-radius: 10px;
+  min-width: 32px; height: 32px; padding: 0 9px; border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
   font-size: 14px; font-weight: 700; flex-shrink: 0; margin-top: 2px;
   font-family: 'Plus Jakarta Sans', sans-serif;
+  white-space: nowrap;
 }
 .tp-token .step-num.blue    { background: var(--color-blue-bg);  color: var(--color-blue); }
 .tp-token .step-num.emerald { background: var(--color-teal-bg);  color: var(--color-teal); }
@@ -661,8 +678,8 @@
 
 /* Footer */
 .tp-token .footer {
-  text-align: center; padding: 40px 20px;
+  text-align: center; padding: 20px 20px 0;
   color: var(--text-muted); font-size: 13px;
-  border-top: 1px solid var(--border); margin-top: 40px;
+  border-top: 1px solid var(--border); margin-top: 24px;
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
