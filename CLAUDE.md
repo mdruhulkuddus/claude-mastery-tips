@@ -46,20 +46,62 @@ Sidebar grouping, welcome screen featured cards, and tip count all update automa
 
 ### Tip HTML Template
 
+Each tip file must be an HTML **fragment** — no `<!DOCTYPE>`, `<html>`, `<head>`, or `<body>` tags. The file is injected via `innerHTML`, so any `<style>` tags inside a `<head>` would be stripped by the browser.
+
+The pattern used by all existing tips is a namespace wrapper → inner container:
+
 ```html
-<div class="tip-content">
-  <header class="tip-header">
-    <span class="tip-category">Category</span>
-    <h1>Title</h1>
-    <div class="tip-meta">
-      <time datetime="2025-01-01">Jan 1, 2025</time>
-      <span class="read-time"></span>  <!-- auto-populated by injectReadTime() -->
-    </div>
-  </header>
-  <!-- content -->
+<div class="tp-<namespace>">
+  <div class="wrap">   <!-- or .container for tp-token -->
+    <!-- full tip content -->
+  </div>
 </div>
 ```
+
+CSS for each namespace lives in `css/tips.css`. All color values must reference variables from `css/theme.css` (e.g. `var(--accent)`, `var(--color-teal)`) — never hardcode colors.
+
+### CSS Variable Reference (theme.css)
+
+Key variables available to tip styles:
+
+| Variable | Purpose |
+|---|---|
+| `--bg`, `--surface` | Page and card backgrounds |
+| `--text`, `--text-secondary`, `--text-muted` | Text hierarchy |
+| `--accent`, `--accent-hover` | Primary brand color |
+| `--border` | Borders and dividers |
+| `--color-teal`, `--color-blue`, `--color-amber` | Semantic accent colors |
+| `--color-violet`, `--color-lime`, `--color-orange` | Semantic accent colors |
+| `--color-rose`, `--color-sky` | Semantic accent colors |
+| `--gradient-blue`, `--gradient-emerald`, `--gradient-amber`, `--gradient-rose` | Gradient presets |
+| `--shadow-sm`, `--shadow-md`, `--shadow-lg` | Box shadows |
 
 ### Theme System
 
 Theme is stored in `localStorage` under key `"theme"` (`"light"` | `"dark"`). Falls back to `prefers-color-scheme`. All colors are CSS custom properties on `:root` scoped by `[data-theme]` attribute on `<html>`.
+
+## Current Tips (as of 2026-04-12)
+
+| File | Namespace | Language | Topic |
+|---|---|---|---|
+| `tips/tip-master-claude-code.html` | `.tp-master` | English | Mastering Claude Code (9 sections) |
+| `tips/tip-claude-project-training-guide.html` | `.tp-training` | Bengali | Claude Project Training (5-phase guide) |
+| `tips/tip-claude-token-optimization-guide.html` | `.tp-token` | Bengali | Token optimization for Claude Pro users |
+
+All three files are proper fragments (converted from standalone full HTML pages). They are registered in the `tips` array at the top of `js/app.js`.
+
+## File Structure
+
+```
+index.html              — SPA shell
+js/
+  app.js                — all app logic (tip registry, routing, theme, search)
+css/
+  theme.css             — CSS custom properties for light/dark theming
+  style.css             — layout, components, sidebar, header, footer
+  tips.css              — per-tip namespace styles (.tp-master, .tp-training, .tp-token)
+tips/
+  tip-master-claude-code.html
+  tip-claude-project-training-guide.html
+  tip-claude-token-optimization-guide.html
+```

@@ -67,8 +67,10 @@ a:hover {
 
 /* --- Header --- */
 .site-header {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
   background: var(--header-bg);
   backdrop-filter: blur(12px);
@@ -212,13 +214,15 @@ a:hover {
   display: flex;
   width: 100%;
   position: relative;
+  padding-top: 60px;    /* reserve space for fixed header */
+  padding-bottom: 56px; /* reserve space for fixed footer */
 }
 
 /* --- Sidebar --- */
 .sidebar {
   width: 280px;
   min-width: 280px;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 60px - 56px);
   position: fixed;
   left: 0;
   top: 60px;
@@ -384,7 +388,7 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: calc(100vh - 60px - 60px);
+  min-height: calc(100vh - 60px - 56px);
   padding: 40px 24px;
 }
 
@@ -477,7 +481,7 @@ a:hover {
 .tip-container {
   max-width: 760px;
   margin: 0 auto;
-  padding: 24px 32px 60px;
+  padding: 24px 32px 0;
 }
 
 .tip-nav-bar {
@@ -527,8 +531,6 @@ a:hover {
 }
 
 /* --- Tip Content Styles (Blog Typography) --- */
-.tip-body .tip-content {}
-
 .tip-body .tip-header {
   margin-bottom: 32px;
 }
@@ -818,7 +820,7 @@ a:hover {
 /* --- Back to Top --- */
 .back-to-top {
   position: fixed;
-  bottom: 24px;
+  bottom: 72px;
   right: 24px;
   width: 40px;
   height: 40px;
@@ -856,16 +858,22 @@ a:hover {
 
 /* --- Footer --- */
 .site-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   border-top: 1px solid var(--border);
-  background: var(--bg);
+  background: var(--header-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   transition: background-color 0.25s ease, border-color 0.25s ease;
-  margin-top: calc(100vh - 60px);
+  z-index: 40;
 }
 
 .footer-inner {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 20px 24px;
+  padding: 14px 24px;
   text-align: center;
 }
 
@@ -895,8 +903,10 @@ a:hover {
   }
 }
 
+/* No `forwards` fill: a lingering transform on .tip-body would turn it into
+   the containing block for any position:fixed descendant in a tip fragment. */
 .tip-body.fade-in {
-  animation: fadeInUp 0.35s ease forwards;
+  animation: fadeInUp 0.35s ease;
 }
 
 /* Skeleton loading */
@@ -946,7 +956,7 @@ a:hover {
   }
 
   .tip-container {
-    padding: 24px 24px 60px;
+    padding: 24px 24px 0;
   }
 }
 
@@ -990,12 +1000,8 @@ a:hover {
     padding-left: 0;
   }
 
-  .site-footer {
-    margin-top: 0;
-  }
-
   .tip-container {
-    padding: 20px 16px 48px;
+    padding: 20px 16px 0;
   }
 
   .tip-body h1 {
@@ -1015,7 +1021,7 @@ a:hover {
   }
 
   .back-to-top {
-    bottom: 16px;
+    bottom: 64px;
     right: 16px;
   }
 }
